@@ -1,0 +1,59 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public class DragMgr : MonoBehaviour
+{
+    public static DragMgr Instance { get; private set; } // 읽기 전용 싱글톤 패턴
+
+    private RectTransform dragObj;
+
+    public Canvas canvas; // cam 참조용
+
+    [HideInInspector]
+    public bool isDrag = false;
+    [HideInInspector]
+    public GameObject target;
+
+    private void Awake() => Instance = this; // 싱글톤 초기화
+
+    public void BeginDrag(RectTransform obj)
+    {
+        dragObj = obj;
+        isDrag = true;
+
+        // middle anchor (보정)
+        dragObj.anchorMin = new Vector2(0.5f, 0.5f);
+        dragObj.anchorMax = new Vector2(0.5f, 0.5f);
+
+        dragObj.localRotation = Quaternion.identity; // 회전값 0
+
+        StartCoroutine(Drag());
+    }
+
+    public void EndDrag()
+    {
+        StopCoroutine(Drag());
+
+        dragObj = null;
+        isDrag = false;
+    }
+
+    private IEnumerator Drag()
+    {
+        while (dragObj != null)
+        {
+            Vector2 pos;
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                dragObj.parent as RectTransform,
+                Input.mousePosition,
+                canvas.worldCamera,
+                out pos
+            ); // world -> rect(UI)
+
+            dragObj.anchoredPosition = pos;
+
+            yield return null; // 다음 프레임
+        }
+    }
+}
