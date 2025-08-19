@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class CardInfo : MonoBehaviour
 {
-    private CardData _cardInfo; // 정보
+    private CardData info; // 정보
 
     public int id;
     public Image[] img;
@@ -18,8 +18,8 @@ public class CardInfo : MonoBehaviour
 
     public void Init(CardData cardInfo)
     {
-        _cardInfo = cardInfo;
-        id = _cardInfo.cardId;
+        info = cardInfo;
+        id = info.cardId;
     }
 
     private void SetCard()
