@@ -21,13 +21,19 @@ public class InfoMgr : MonoBehaviour
 
     #region Card
     public GameObject cardPrefab;
+
+    private int[] selectedCardId = new int[] { 0, 1, 2 };
+    public int[] GetCardIds()
+    {
+        return selectedCardId;
+    }
     #endregion
 
     #region Character
-    private int[] selectedCharId = new int[] { 0, 1, 2 };
     public GameObject charPrefab;
-    
-    public int[] getCharIds()
+
+    private int[] selectedCharId = new int[] { 0, 1, 2 };
+    public int[] GetCharIds()
     {
         return selectedCharId;
     }

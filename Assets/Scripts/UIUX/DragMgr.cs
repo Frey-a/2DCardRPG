@@ -11,8 +11,6 @@ public class DragMgr : MonoBehaviour
 
     [HideInInspector]
     public bool isDrag = false;
-    [HideInInspector]
-    public GameObject target;
 
     private void Awake() => Instance = this; // 싱글톤 초기화
 
