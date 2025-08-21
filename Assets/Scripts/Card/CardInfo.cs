@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class CardInfo : MonoBehaviour
 {
-    private CardData info; // 정보
+    private CardData data; // 정보
 
     public int id;
     public Image[] img;
@@ -16,14 +16,9 @@ public class CardInfo : MonoBehaviour
     public Text charName;
     #endregion
 
-    public void Init(CardData cardInfo)
+    public void SetData(int cardId)
     {
-        info = cardInfo;
-        id = info.cardId;
-    }
-
-    private void SetCard()
-    {
-        // 이미지 등 자동 설정
+        data = InfoMgr.Instance.database.cards.Find(c => c.cardId == cardId);
+        id = data.cardId;
     }
 }
