@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DicePhaseMgr : MonoBehaviour
+public class BattleOrderMgr : MonoBehaviour
 {
     private List<(int val, int idx, bool isEnemy)> diceVal; // 순서 정렬을 위한 list
     private float rollDuration; // 굴리는 시간

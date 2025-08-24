@@ -1332,7 +1332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   database: {fileID: 0}
-  cardPrefab: {fileID: 0}
+  cardPrefab: {fileID: 4102462360020898884, guid: 3d3c335795270af47a4606bb10c6f62d, type: 3}
   charPrefab: {fileID: 4882328321350991957, guid: 6e00c5493521d9d4c8030d32c2371c3c, type: 3}
   enemyPrefab: {fileID: 0}
 --- !u!4 &963212457
@@ -1399,7 +1399,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canvas: {fileID: 404179994}
   isDrag: 0
-  target: {fileID: 0}
 --- !u!114 &1124354973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1456,6 +1455,9 @@ MonoBehaviour:
   turnImgParent: {fileID: 1993662168}
   allies: {fileID: 84984694}
   enemies: {fileID: 298482791}
+  deck: {fileID: 471704214}
+  hand: {fileID: 1674775104}
+  graveyard: {fileID: 391452629}
 --- !u!114 &1124354975
 MonoBehaviour:
   m_ObjectHideFlags: 0

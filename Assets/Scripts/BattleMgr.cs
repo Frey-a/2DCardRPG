@@ -3,7 +3,7 @@
 public class BattleMgr : MonoBehaviour
 {
     public BattleUIMgr uiMgr;
-    public DicePhaseMgr diceMgr;
+    public BattleOrderMgr orderMgr;
 
     private void Start()
     {
@@ -18,7 +18,7 @@ public class BattleMgr : MonoBehaviour
             Transform character = charSlot.transform.GetChild(0);
             CharInfo info = character.GetComponent<CharInfo>();
 
-            diceMgr.CreateSlot(charId, false);
+            orderMgr.CreateSlot(charId, false);
             //info.SetData(charId);
             //uiMgr.UpdateStatus(info);
         }
@@ -39,6 +39,6 @@ public class BattleMgr : MonoBehaviour
 
     private void StartBattle()
     {
-        diceMgr.RollDice();
+        orderMgr.RollDice();
     }
 }
