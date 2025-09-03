@@ -16,7 +16,7 @@ MonoBehaviour:
   - cardId: 1
     cardName: "\uC544\uD508\uCE74\uB4DC"
     targetType: enemy
-    targetPos: single_select
+    targetPos: select_single
     cost: 1
     charName: 
     animationKey: attack1
@@ -32,7 +32,7 @@ MonoBehaviour:
   - cardId: 2
     cardName: "\uC548\uC544\uD508\uCE74\uB4DC"
     targetType: enemy
-    targetPos: double_random
+    targetPos: random_double
     cost: 2
     charName: 
     animationKey: attack2
@@ -80,7 +80,7 @@ MonoBehaviour:
   - cardId: 5
     cardName: "\uBC29\uC5B4\uC99D\uAC00"
     targetType: ally
-    targetPos: select_one
+    targetPos: single_select
     cost: 2
     charName: 
     animationKey: cast_ally

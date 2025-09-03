@@ -24,12 +24,12 @@ public class BattleMgr : MonoBehaviour
                     GameObject character = Instantiate(InfoMgr.Instance.infoPrefab, slot);
                     CharInfo info = character.GetComponent<CharInfo>();
 
+                    //info.SetData(charId);
                     break;
                 }
             }
 
             orderMgr.CreateDice(charId, false);
-            //info.SetData(charId);
             //uiMgr.UpdateStatus(info);
         }
 
@@ -57,7 +57,7 @@ public class BattleMgr : MonoBehaviour
         for(int i = 0; i < InfoMgr.Instance.GetCharIds().Length + InfoMgr.Instance.GetMonsterIds().Length; i++)
         {
             recentOrder = orderMgr.ChkOrder();
-            uiMgr.CreateTurnImg(recentOrder);
+            uiMgr.CreateTurnImg();
         }
 
         Draw(6); // debug
@@ -133,5 +133,51 @@ public class BattleMgr : MonoBehaviour
         }
 
         uiMgr.UpdateCntByChildren(uiMgr.graveyard);
+    }
+
+    public void ActiveTarget(CardInfo.TargetType type, bool isActive)
+    {
+        switch (type)
+        {
+            case CardInfo.TargetType.none:
+
+                break;
+
+            case CardInfo.TargetType.enemy:
+                foreach (Transform child in uiMgr.enemies)
+                {
+                    uiMgr.ActiveSlot(child, isActive);
+                }
+                break;
+
+            case CardInfo.TargetType.ally:
+                foreach (Transform child in uiMgr.allies)
+                {
+                    uiMgr.ActiveSlot(child, isActive);
+                }
+                break;
+
+            case CardInfo.TargetType.self:
+                uiMgr.ActiveSlot(GetRecentAlly(), isActive);
+                break;
+        }
+    }
+
+    private Transform GetRecentAlly()
+    {
+        foreach (Transform slot in uiMgr.allies)
+        {
+            if (slot.childCount > 0)
+            {
+                CharInfo info = slot.GetComponentInChildren<CharInfo>();
+
+                if (recentOrder.id == info.id)
+                {
+                    return slot;
+                }
+            }
+        }
+
+        return null;
     }
 }

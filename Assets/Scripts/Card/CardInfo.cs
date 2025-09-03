@@ -17,6 +17,22 @@ public class CardInfo : MonoBehaviour
     public Text charName;
     #endregion
 
+    public enum TargetType
+    {
+        none,
+        enemy,
+        ally,
+        self
+    }
+
+    public enum TargetRange
+    {
+        select,
+        random,
+        all,
+        self
+    }
+
     public void SetData(int cardId)
     {
         data = InfoMgr.Instance.database.cards.Find(c => c.cardId == cardId);
@@ -41,8 +57,41 @@ public class CardInfo : MonoBehaviour
         }
     }
 
-    public string GetTargetType()
+    public TargetType GetTargetType()
     {
-        return data.targetType;
+        if(data.targetPos.Equals("self"))
+        {
+            return TargetType.self;
+        }
+        else
+        {
+            Enum.TryParse(data.targetType, out TargetType type);
+            return type;
+        }
+    }
+
+    public void Use()
+    {
+        char delimiter = '_';
+        string[] target = data.targetPos.Split(delimiter);
+
+        if (Enum.TryParse(target[0], out TargetRange range) && Enum.IsDefined(typeof(TargetRange), range))
+        {
+            switch(range)
+            {
+                case TargetRange.select:
+
+                    break;
+                case TargetRange.random:
+
+                    break;
+                case TargetRange.all:
+
+                    break;
+                case TargetRange.self:
+
+                    break;
+            }
+        }
     }
 }

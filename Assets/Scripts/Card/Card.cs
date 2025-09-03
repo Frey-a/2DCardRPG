@@ -4,14 +4,14 @@ using UnityEngine.EventSystems;
 
 public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
-    private BattleUIMgr uiMgr;
+    private BattleMgr battleMgr;
     private int idx; // hand index
 
     public CardInfo info;
 
     private void Start()
     {
-        uiMgr = Object.FindFirstObjectByType<BattleUIMgr>();
+        battleMgr = Object.FindFirstObjectByType<BattleMgr>();
         Hover(); // prefab -> detail 상태
     }
 
@@ -32,7 +32,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private void Restore() // -> hand
     {
-        transform.SetParent(uiMgr.hand);
+        transform.SetParent(battleMgr.uiMgr.hand);
 
         if (idx != transform.GetSiblingIndex()) // 제자리
         {
@@ -53,8 +53,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         transform.SetParent(transform.parent.parent);
         transform.rotation = Quaternion.identity;
 
-        //uiMgr.ActiveTarget(info.GetTargetType(), true);
-        uiMgr.ActiveTarget("Enemy", true);
+        battleMgr.ActiveTarget(info.GetTargetType(), true);
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -72,14 +71,16 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             {
                 //if (카드 사용이 가능한지)
                 //{
-                //    transform.SetParent(BattleUIMgr.graveyard); // hand -> trash
+                //    transform.SetParent(uiMgr.graveyard); // hand -> trash
+                //    uiMgr.UpdateCntByChildren(uiMgr.graveyard);
                 //}
                 //else
                 //{
                 //    Restore();
                 //}
-                transform.SetParent(uiMgr.graveyard); // hand -> trash
-                uiMgr.UpdateCntByChildren(uiMgr.graveyard);
+                info.Use();
+                transform.SetParent(battleMgr.uiMgr.graveyard); // hand -> trash
+                battleMgr.uiMgr.UpdateCntByChildren(battleMgr.uiMgr.graveyard);
             }
             else
             {
@@ -88,8 +89,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
 
         DragMgr.Instance.EndDrag();
-        //uiMgr.ActiveTarget(info.GetTargetType(), false);
-        uiMgr.ActiveTarget("Enemy", false);
+        battleMgr.ActiveTarget(info.GetTargetType(), false);
         Hover();
     }
 }

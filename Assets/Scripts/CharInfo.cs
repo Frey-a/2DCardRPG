@@ -6,12 +6,15 @@ public class CharInfo : MonoBehaviour
     private CharData data;
     private CharStatus status;
 
+    public int id;
     public Image img;
     public RectTransform hp;
 
     public void SetData(int charId)
     {
         data = InfoMgr.Instance.database.chars.Find(c => c.charId == charId);
+        id = data.charId;
+
         LoadStatus(charId);
     }
 
@@ -30,14 +33,10 @@ public class CharInfo : MonoBehaviour
         }
     }
 
-    public CharData GetData()
+    public void UpdateStatus()
     {
-        return data;
-    }
-
-    public CharStatus GetStatus()
-    {
-        return status;
+        Text hpTxt = hp.GetComponentInChildren<Text>();
+        hpTxt.text = status.hp + " / " + data.maxHp;
     }
 
     public void SaveStatus()
