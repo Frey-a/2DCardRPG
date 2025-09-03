@@ -8,11 +8,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private int idx; // hand index
 
     public CardInfo info;
+    public GameObject detailForm;
 
     private void Start()
     {
         battleMgr = Object.FindFirstObjectByType<BattleMgr>();
-        Hover(); // prefab -> detail 상태
+        detailForm.SetActive(false);
     }
 
     private void Hover() // mini <-> detail
