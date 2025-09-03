@@ -45,7 +45,7 @@ public class BattleMgr : MonoBehaviour
             GameObject card = Instantiate(InfoMgr.Instance.cardPrefab, uiMgr.deck);
             CardInfo info = card.GetComponent<CardInfo>();
 
-            //info.SetData(cardId);
+            info.SetData(cardId);
         }
 
         uiMgr.UpdateCntByChildren(uiMgr.deck);
@@ -60,7 +60,7 @@ public class BattleMgr : MonoBehaviour
             uiMgr.CreateTurnImg(recentOrder);
         }
 
-        Draw(2); // debug
+        Draw(6); // debug
         // 시작연출 필요
         GetRecentOrder();
     }

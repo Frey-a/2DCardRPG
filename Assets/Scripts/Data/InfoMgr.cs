@@ -19,11 +19,24 @@ public class InfoMgr : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Start()
+    {
+        SelectCard();
+    }
+
     #region Card
     public GameObject cardPrefab;
 
-    private int[] selectedCardId = new int[] { 0, 1, 2 };
-    public int[] GetCardIds()
+    private List<int> selectedCardId = new List<int>();
+
+    private void SelectCard() // DB에서 가져오는게 아니라 변형 필요
+    {
+        foreach(CardData data in database.cards)
+        {
+            selectedCardId.Add(data.cardId);
+        }
+    }
+    public List<int> GetCardIds()
     {
         return selectedCardId;
     }

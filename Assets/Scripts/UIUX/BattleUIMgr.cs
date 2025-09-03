@@ -46,10 +46,10 @@ public class BattleUIMgr : MonoBehaviour
 
     public enum TargetType
     {
-        None,
-        Enemy,
-        Ally,
-        All
+        none,
+        enemy,
+        ally,
+        all
     }
 
     public void ActiveTarget(string targetType, bool isActive)
@@ -58,17 +58,13 @@ public class BattleUIMgr : MonoBehaviour
         {
             switch(type)
             {
-                case TargetType.None:
+                case TargetType.none:
 
                     break;
-                case TargetType.Enemy:
+                case TargetType.enemy:
                     ActiveImg(enemies, isActive);
                     break;
-                case TargetType.Ally:
-                    ActiveImg(allies, isActive);
-                    break;
-                case TargetType.All:
-                    ActiveImg(enemies, isActive);
+                case TargetType.ally:
                     ActiveImg(allies, isActive);
                     break;
             }

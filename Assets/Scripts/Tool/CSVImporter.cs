@@ -27,8 +27,6 @@ public class CSVImporter : EditorWindow
         UnityEngine.Object newExcelFile = EditorGUILayout.ObjectField("Excel File", excelFile, typeof(UnityEngine.Object), false);
         outputPath = EditorGUILayout.TextField("Output Folder", outputPath);
 
-        data = AssetDatabase.LoadAssetAtPath<SODatabase>(Path.Combine(outputPath, excelFile.name + ".asset"));
-
         if (newExcelFile != excelFile)
         {
             excelFile = newExcelFile;
@@ -44,6 +42,8 @@ public class CSVImporter : EditorWindow
         }
         else
         {
+            data = AssetDatabase.LoadAssetAtPath<SODatabase>(Path.Combine(outputPath, excelFile.name + ".asset"));
+
             GUILayout.Space(10);
             GUILayout.Label("Import Individual Sheets", EditorStyles.boldLabel);
 
@@ -70,8 +70,8 @@ public class CSVImporter : EditorWindow
             return;
         }
 
-        using var stream = File.Open(path, FileMode.Open, FileAccess.Read);
-        using var reader = ExcelReaderFactory.CreateReader(stream);
+        using FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read);
+        using IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
         excelDataSet = reader.AsDataSet();
 
         foreach (DataTable table in excelDataSet.Tables)
@@ -107,7 +107,7 @@ public class CSVImporter : EditorWindow
         DataTable table = excelDataSet.Tables[sheetName];
         RegistDic(table);
 
-        if (importDic.TryGetValue(key, out var action))
+        if (importDic.TryGetValue(key, out Action<DataTable, SODatabase> action))
         {
             action(table, data);
         }
@@ -134,18 +134,18 @@ public class CSVImporter : EditorWindow
     private void ImportData<T>(DataTable table, ref List<T> list) where T : new()
     {
         list = new List<T>();
-        var fields = typeof(T).GetFields(BindingFlags.Public | BindingFlags.Instance);
+        FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Public | BindingFlags.Instance);
 
-        for (int i = 3; i < table.Rows.Count; i++)
+        for (int i = 1; i < table.Rows.Count; i++)
         {
-            var row = table.Rows[i];
+            DataRow row = table.Rows[i];
             T instance = new T();
 
             for (int col = 0; col < table.Columns.Count && col < fields.Length; col++)
             {
                 try
                 {
-                    var field = fields[col];
+                    FieldInfo field = fields[col];
                     object raw = row[col];
 
                     if (raw == null) continue;

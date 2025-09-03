@@ -705,10 +705,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
-  img:
+  imgs:
   - {fileID: 804621166099845240}
   - {fileID: 6094621722508653780}
-  cost:
+  costs:
   - {fileID: 2055143135218531376}
   - {fileID: 9132961188259568656}
   cardName: {fileID: 2119940892214793300}
