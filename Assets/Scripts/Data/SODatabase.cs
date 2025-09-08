@@ -32,7 +32,6 @@ public class CardData
 [System.Serializable]
 public class Effect
 {
-    public int effectId;
     public string effectKey;
     public string effectName;
 }
@@ -42,6 +41,7 @@ public class CharData
 {
     public int charId;
     public string charName;
+    public string spriteRoot;
     public int maxHp;
     public int maxCost;
     public int drawCnt; // 자신의 턴에 드로우 횟수

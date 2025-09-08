@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 33963a53c535c06499a66df91f38bb13, type: 3}
-  m_Name: CardDraft
+  m_Name: DBDraft
   m_EditorClassIdentifier: 
   cards:
   - cardId: 1
@@ -80,7 +80,7 @@ MonoBehaviour:
   - cardId: 5
     cardName: "\uBC29\uC5B4\uC99D\uAC00"
     targetType: ally
-    targetPos: single_select
+    targetPos: select_single
     cost: 2
     charName: 
     animationKey: cast_ally
@@ -109,4 +109,22 @@ MonoBehaviour:
     effectVal: 10
     round: 0
     cnt: 0
-  chars: []
+  chars:
+  - charId: 1
+    charName: coyote
+    spriteRoot: SD/Coyote/
+    maxHp: 30
+    maxCost: 5
+    drawCnt: 2
+  - charId: 2
+    charName: snowleopard
+    spriteRoot: 
+    maxHp: 20
+    maxCost: 5
+    drawCnt: 2
+  - charId: 3
+    charName: blackcat
+    spriteRoot: 
+    maxHp: 10
+    maxCost: 5
+    drawCnt: 2

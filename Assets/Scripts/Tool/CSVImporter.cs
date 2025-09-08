@@ -127,7 +127,8 @@ public class CSVImporter : EditorWindow
     {
         importDic = new(StringComparer.OrdinalIgnoreCase)
         {
-            { sheetNames[0], (table, data) => ImportData<CardData>(table, ref data.cards) }
+            { sheetNames[0], (table, data) => ImportData<CardData>(table, ref data.cards) },
+            { sheetNames[1], (table, data) => ImportData<CharData>(table, ref data.chars) }
         };
     }
 
