@@ -4,9 +4,11 @@ using UnityEngine;
 public class BattleMgr : MonoBehaviour
 {
     private (bool isEnemy, int id) recentOrder; // 현재 순서
+    private int cost = 0; // 현재 코스트
 
     public BattleUIMgr uiMgr;
     public BattleOrderMgr orderMgr;
+    public EffectMgr effectMgr;
 
     private void Start()
     {
@@ -22,10 +24,10 @@ public class BattleMgr : MonoBehaviour
             {
                 if(slot.childCount < 1)
                 {
-                    GameObject character = Instantiate(InfoMgr.Instance.charPrefab, slot);
-                    CharInfo info = character.GetComponent<CharInfo>();
+                    GameObject characterObj = Instantiate(InfoMgr.Instance.charPrefab, slot);
+                    Character Character = characterObj.GetComponent<Character>();
 
-                    info.SetData(charId);
+                    Character.SetData(charId);
                     break;
                 }
             }
@@ -57,10 +59,11 @@ public class BattleMgr : MonoBehaviour
         for (int i = 0; i < InfoMgr.Instance.GetCharIds().Count + InfoMgr.Instance.GetMonsterIds().Length; i++)
         {
             recentOrder = orderMgr.ChkOrder();
-            uiMgr.CreateTurnImg();
+            uiMgr.CreateOrderImg(recentOrder);
         }
 
-        Draw(6); // debug
+        int cnt = 3; // 첫턴에 지급할 카드 매수
+        Draw(cnt);
         // 시작연출 필요
         GetRecentOrder();
     }
@@ -71,19 +74,39 @@ public class BattleMgr : MonoBehaviour
 
         if(recentOrder.isEnemy)
         {
+            // 카드사용 금지
+            //foreach (Monster monster in uiMgr.enemies)
+            //{
+            //    if (monster.id != recentOrder.id)
+            //    {
+            //        continue;
+            //    }
+
+            //    Debug.Log("Monster Action");
+            //}
             Debug.Log("Monster Action");
-            // 적 행동, 카드사용 금지
             EndOrder();
         }
         else
         {
             // 카드사용 허가
+            foreach(Transform charTrans in uiMgr.allies)
+            {
+                Character character = charTrans.GetComponentInChildren<Character>();
+
+                if(character.id != recentOrder.id)
+                {
+                    continue;
+                }
+
+                character.StartOrder();
+            }
         }
     }
 
     public void EndOrder()
     {
-        uiMgr.UpdateTurnImg();
+        uiMgr.UpdateOrderImg();
 
         if(orderMgr.idx == 0)
         {
@@ -92,6 +115,13 @@ public class BattleMgr : MonoBehaviour
         }
 
         GetRecentOrder();
+    }
+
+    public void SetCost(int val)
+    {
+        cost = val;
+
+        uiMgr.UpdateCost(cost);
     }
 
     public void Draw(int val) // deck -> hand
@@ -106,8 +136,8 @@ public class BattleMgr : MonoBehaviour
             int idx = UnityEngine.Random.Range(0, uiMgr.deck.childCount); // 랜덤으로
 
             uiMgr.deck.GetChild(idx).SetParent(uiMgr.hand); // 한장 뽑음
-            uiMgr.UpdateCntByChildren(uiMgr.deck);
         }
+        uiMgr.UpdateCntByChildren(uiMgr.deck);
 
         ExceedHand();
     }
@@ -135,38 +165,31 @@ public class BattleMgr : MonoBehaviour
         uiMgr.UpdateCntByChildren(uiMgr.graveyard);
     }
 
-    public enum TargetType
+    public void ActiveTarget(string type)
     {
-        Enemy,
-        Ally,
-        Self
-    }
+        //if (Enum.TryParse<TargetType>(type, true, out TargetType target))
+        //{
+        //    switch (target)
+        //    {
+        //        case TargetType.Enemy:
+        //            foreach (Transform child in uiMgr.enemies)
+        //            {
+        //                uiMgr.ActiveSlot(child);
+        //            }
+        //            break;
 
-    public void ActiveTarget(string type, bool isActive)
-    {
-        if (Enum.TryParse<TargetType>(type, true, out TargetType target))
-        {
-            switch (target)
-            {
-                case TargetType.Enemy:
-                    foreach (Transform child in uiMgr.enemies)
-                    {
-                        uiMgr.ActiveSlot(child, isActive);
-                    }
-                    break;
+        //        case TargetType.Ally:
+        //            foreach (Transform child in uiMgr.allies)
+        //            {
+        //                uiMgr.ActiveSlot(child);
+        //            }
+        //            break;
 
-                case TargetType.Ally:
-                    foreach (Transform child in uiMgr.allies)
-                    {
-                        uiMgr.ActiveSlot(child, isActive);
-                    }
-                    break;
-
-                case TargetType.Self:
-                    uiMgr.ActiveSlot(GetRecentAlly(), isActive);
-                    break;
-            }
-        }
+        //        case TargetType.Self:
+        //            uiMgr.ActiveSlot(GetRecentAlly());
+        //            break;
+        //    }
+        //}
     }
 
     private Transform GetRecentAlly()
@@ -175,9 +198,9 @@ public class BattleMgr : MonoBehaviour
         {
             if (slot.childCount > 0)
             {
-                CharInfo info = slot.GetComponentInChildren<CharInfo>();
+                Character character = slot.GetComponentInChildren<Character>();
 
-                if (recentOrder.id == info.id)
+                if (recentOrder.id == character.id)
                 {
                     return slot;
                 }
@@ -185,5 +208,10 @@ public class BattleMgr : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void Effect()
+    {
+
     }
 }

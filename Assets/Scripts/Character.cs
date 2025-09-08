@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class CharInfo : MonoBehaviour
+public class Character : MonoBehaviour
 {
+    private BattleMgr battleMgr;
     private CharData data;
     private CharStatus status = new CharStatus();
 
@@ -10,12 +11,22 @@ public class CharInfo : MonoBehaviour
     public Image img;
     public RectTransform hp;
 
+    private void Start()
+    {
+        battleMgr = Object.FindFirstObjectByType<BattleMgr>();
+    }
+
     public void SetData(int charId)
     {
         data = InfoMgr.Instance.database.chars.Find(c => c.charId == charId);
         id = data.charId;
 
         LoadStatus(charId);
+    }
+
+    public void SaveStatus()
+    {
+
     }
 
     public void LoadStatus(int charId)
@@ -41,8 +52,9 @@ public class CharInfo : MonoBehaviour
         hpTxt.text = status.hp + " / " + data.maxHp;
     }
 
-    public void SaveStatus()
+    public void StartOrder()
     {
-
+        battleMgr.SetCost(data.maxCost); // debuff가 붙어있으면 적용값으로 보내주기
+        battleMgr.Draw(data.drawCnt);
     }
 }

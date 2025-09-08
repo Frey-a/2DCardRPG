@@ -1568,6 +1568,7 @@ GameObject:
   - component: {fileID: 1124354973}
   - component: {fileID: 1124354974}
   - component: {fileID: 1124354975}
+  - component: {fileID: 1124354976}
   m_Layer: 0
   m_Name: GameMgr
   m_TagString: Untagged
@@ -1661,6 +1662,7 @@ MonoBehaviour:
   turnImgParent: {fileID: 1993662168}
   allies: {fileID: 84984694}
   enemies: {fileID: 298482791}
+  cost: {fileID: 1422529847}
   deck: {fileID: 471704214}
   hand: {fileID: 1674775104}
   graveyard: {fileID: 391452629}
@@ -1678,6 +1680,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiMgr: {fileID: 1124354974}
   orderMgr: {fileID: 1124354973}
+  effectMgr: {fileID: 1124354976}
+--- !u!114 &1124354976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1124354969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c8da7a34128f5b499753063853f3a42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1242967667
 GameObject:
   m_ObjectHideFlags: 0
