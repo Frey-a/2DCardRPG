@@ -57,7 +57,6 @@ public class Character : MonoBehaviour, IEffect
 
     public void StartOrder()
     {
-        battleMgr.SetCost(data.maxCost); // debuff가 붙어있으면 적용값으로 보내주기
         battleMgr.Draw(data.drawCnt);
     }
 

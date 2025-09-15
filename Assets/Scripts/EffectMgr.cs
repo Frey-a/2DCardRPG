@@ -5,7 +5,6 @@ public struct EffectData
 {
     public string targetType; // 카드 대상
     public string targetPos; // 대상 범위
-    public int cost;
     public string effectKey; // effect 테이블 키
     public int effectVal;
     public int round; // 지속 라운드 // 발동 라운드 포함
@@ -15,7 +14,6 @@ public struct EffectData
     {
         targetType = data.targetType;
         targetPos = data.targetPos;
-        cost = data.cost;
         effectKey = data.effectKey;
         effectVal = data.effectVal;
         round = data.round;

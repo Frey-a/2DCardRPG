@@ -6,7 +6,6 @@ public class BattleUIMgr : MonoBehaviour
     public Transform turnImgParent;
     public Transform allies; // 캐릭터 생성 위치
     public Transform enemies; // 적 생성 위치
-    public Transform cost;
     public Transform deck;
     public Transform hand;
     public Transform graveyard;
@@ -14,11 +13,6 @@ public class BattleUIMgr : MonoBehaviour
     public void UpdateCntByChildren(Transform trans)
     {
         trans.parent.GetComponentInChildren<Text>().text = trans.childCount.ToString();
-    }
-
-    public void UpdateCost(int val)
-    {
-        cost.GetComponentInChildren<Text>().text = val.ToString();
     }
 
     public void CreateOrderImg((bool isEnemy, int id) order)

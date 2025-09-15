@@ -4,7 +4,6 @@ using UnityEngine;
 public class BattleMgr : MonoBehaviour
 {
     private (bool isEnemy, int id) recentOrder; // 현재 순서
-    private int cost = 0; // 현재 코스트
 
     public BattleUIMgr uiMgr;
     public BattleOrderMgr orderMgr;
@@ -50,7 +49,6 @@ public class BattleMgr : MonoBehaviour
             card.SetData(cardId);
         }
 
-        uiMgr.UpdateCntByChildren(uiMgr.deck);
         orderMgr.RollDice();
     }
 
@@ -117,13 +115,6 @@ public class BattleMgr : MonoBehaviour
         GetRecentOrder();
     }
 
-    public void SetCost(int val)
-    {
-        cost = val;
-
-        uiMgr.UpdateCost(cost);
-    }
-
     public void Draw(int val) // deck -> hand
     {
         for (int i = 0; i < val; i++)
@@ -137,7 +128,6 @@ public class BattleMgr : MonoBehaviour
 
             uiMgr.deck.GetChild(idx).SetParent(uiMgr.hand); // 한장 뽑음
         }
-        uiMgr.UpdateCntByChildren(uiMgr.deck);
 
         ExceedHand();
     }
@@ -212,18 +202,16 @@ public class BattleMgr : MonoBehaviour
 
     public bool UseCard(EffectData data, Transform select)
     {
-        if(data.cost <= cost)
-        {
-            cost -= data.cost;
-            uiMgr.UpdateCost(cost);
+        //if()
+        //{
+        //    effectMgr.Effect(data, select);
 
-            effectMgr.Effect(data, select);
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        //    return true;
+        //}
+        //else
+        //{
+        //    return false;
+        //}
+        return false;
     }
 }

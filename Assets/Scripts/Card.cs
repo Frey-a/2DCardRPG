@@ -14,7 +14,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public GameObject detailForm;
     public int id;
     public Image[] imgs;
-    public Text[] costs;
     public Text cardName;
     public Text description; // 효과 설명
     #region Exclusive
@@ -39,10 +38,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         //{
 
         //}
-        foreach (Text cost in costs)
-        {
-            cost.text = data.cost.ToString();
-        }
         cardName.text = data.cardName;
         //description.text = 
 
@@ -58,7 +53,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         effectData.targetType = data.targetType;
         effectData.targetPos = data.targetPos;
-        effectData.cost = data.cost;
         effectData.effectKey = data.effectKey;
         effectData.effectVal = data.effectVal;
         effectData.round = data.round;
