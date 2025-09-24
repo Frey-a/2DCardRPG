@@ -25,7 +25,7 @@ public class BattleMgr : MonoBehaviour
                 if(slot.childCount < 1)
                 {
                     GameObject characterObj = Instantiate(InfoMgr.Instance.charPrefab, slot);
-                    Character character = characterObj.GetComponent<Character>();
+                    PlayerableChar character = characterObj.GetComponent<PlayerableChar>();
 
                     character.SetData(charId);
                     drawCnt += character.GetDrawCnt();
@@ -38,7 +38,17 @@ public class BattleMgr : MonoBehaviour
 
         foreach(int monsterId in InfoMgr.Instance.GetMonsterIds()) // enemy
         {
-            GameObject monster = Instantiate(InfoMgr.Instance.charPrefab, uiMgr.enemies);
+            foreach (Transform slot in uiMgr.enemies) // 순서가 고정되므로 추후 논의
+            {
+                if (slot.childCount < 1)
+                {
+                    GameObject monsterObj = Instantiate(InfoMgr.Instance.monsterPrefab, slot);
+                    Monster monster = monsterObj.GetComponent<Monster>();
+
+                    monster.SetData(monsterId);
+                    break;
+                }
+            }
 
             orderMgr.CreateDice(monsterId, true);
         }
@@ -56,7 +66,7 @@ public class BattleMgr : MonoBehaviour
 
     private void StartBattle()
     {
-        for (int i = 0; i < InfoMgr.Instance.GetCharIds().Count + InfoMgr.Instance.GetMonsterIds().Length; i++)
+        for (int i = 0; i < InfoMgr.Instance.GetCharIds().Count + InfoMgr.Instance.GetMonsterIds().Count; i++)
         {
             recentOrder = orderMgr.ChkOrder();
             uiMgr.CreateOrderImg(recentOrder);
@@ -95,7 +105,7 @@ public class BattleMgr : MonoBehaviour
             // 카드사용 허가
             foreach(Transform charTrans in uiMgr.allies)
             {
-                Character character = charTrans.GetComponentInChildren<Character>();
+                PlayerableChar character = charTrans.GetComponentInChildren<PlayerableChar>();
 
                 if(character.id != recentOrder.id)
                 {
@@ -165,16 +175,22 @@ public class BattleMgr : MonoBehaviour
             switch (target)
             {
                 case TargetType.Enemy:
-                    foreach (Transform child in uiMgr.enemies)
+                    foreach (Transform slot in uiMgr.enemies)
                     {
-                        uiMgr.ActiveSlot(child);
+                        if(slot.childCount > 0)
+                        {
+                            uiMgr.ActiveSlot(slot);
+                        }
                     }
                     break;
 
                 case TargetType.Ally:
-                    foreach (Transform child in uiMgr.allies)
+                    foreach (Transform slot in uiMgr.allies)
                     {
-                        uiMgr.ActiveSlot(child);
+                        if (slot.childCount > 0)
+                        {
+                            uiMgr.ActiveSlot(slot);
+                        }
                     }
                     break;
 
@@ -191,7 +207,7 @@ public class BattleMgr : MonoBehaviour
         {
             if (slot.childCount > 0)
             {
-                Character character = slot.GetComponentInChildren<Character>();
+                PlayerableChar character = slot.GetComponentInChildren<PlayerableChar>();
 
                 if (recentOrder.id == character.id)
                 {
@@ -203,10 +219,10 @@ public class BattleMgr : MonoBehaviour
         return null;
     }
 
-    public bool UseCard(EffectData data, Transform select)
-    {
-        effectMgr.Effect(data, select);
+    //public bool UseCard(EffectData data, Transform select)
+    //{
+    //    effectMgr.Effect(data, select);
 
-        return true;
-    }
+    //    return true;
+    //}
 }

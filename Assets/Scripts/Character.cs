@@ -1,82 +1,41 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Character : MonoBehaviour, IEffect
+public abstract class Character : MonoBehaviour
 {
-    private BattleMgr battleMgr;
-    private CharData data;
-    private CharStatus status = new CharStatus();
+    protected CharStatus status = new CharStatus();
 
     public int id;
     public Image img;
     public RectTransform hp;
 
-    private void Start()
-    {
-        battleMgr = Object.FindFirstObjectByType<BattleMgr>();
-    }
-
-    public void SetData(int charId)
-    {
-        data = InfoMgr.Instance.database.chars.Find(c => c.charId == charId);
-        id = data.charId;
-
-        LoadStatus(charId);
-    }
-
-    public int GetDrawCnt()
-    {
-        return data.drawPoint;
-    }
-
-    public void SaveStatus()
-    {
-
-    }
-
-    public void LoadStatus(int charId)
-    {
-        CharStatus loadStatus = InfoMgr.Instance.LoadStatus(charId);
-
-        if (loadStatus != null)
-        {
-            status = loadStatus;
-        }
-        else
-        {
-            status.charId = data.charId;
-            status.hp = data.maxHp;
-        }
-
-        UpdateStatus();
-    }
-
-    public void UpdateStatus()
-    {
-        Slider hpBar = hp.GetComponent<Slider>();
-        hpBar.value = (float)status.hp / data.maxHp;
-
-        Text hpTxt = hp.GetComponentInChildren<Text>();
-        hpTxt.text = status.hp + " / " + data.maxHp;
-    }
+    protected abstract int GetMaxHp();
 
     public void Damage(int val)
     {
         status.hp -= val;
-        UpdateStatus();
+
+        if (status.hp < 0)
+        {
+            status.hp = 0;
+        }
+
+        UpdateHp();
     }
 
     public void Heal(int val)
     {
-        if (status.hp + val < data.maxHp)
-        {
-            status.hp += val;
-        }
-        else
-        {
-            status.hp = data.maxHp;
-        }
+        status.hp = Mathf.Min(status.hp + val, GetMaxHp());
 
-        UpdateStatus();
+        UpdateHp();
+    }
+
+    public void UpdateHp()
+    {
+        Slider hpBar = hp.GetComponent<Slider>();
+        hpBar.value = (float)status.hp / GetMaxHp();
+
+        Text hpTxt = hp.GetComponentInChildren<Text>();
+        hpTxt.text = status.hp + " / " + GetMaxHp();
     }
 }
