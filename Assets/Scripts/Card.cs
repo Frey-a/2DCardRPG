@@ -7,7 +7,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 {
     private BattleMgr battleMgr;
     private CardData data; // 정보
-    private EffectData effectData; // 효과 관련정보만 포함
+    //private EffectData effectData; // 효과 관련정보만 포함
     private int idx; // hand index
 
     public int id;
@@ -23,7 +23,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private void Start()
     {
         battleMgr = Object.FindFirstObjectByType<BattleMgr>();
-        CreateEffectData();
+        //CreateEffectData();
     }
 
     public void SetData(int cardId)
@@ -43,15 +43,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
     }
 
-    public void CreateEffectData()
-    {
-        effectData.targetType = data.targetType;
-        effectData.targetPos = data.targetPos;
-        effectData.effectKey = data.effectKey;
-        effectData.effectVal = data.effectVal;
-        effectData.round = data.round;
-        effectData.cnt = data.cnt;
-    }
+    //public void CreateEffectData()
+    //{
+    //    effectData.targetType = data.targetType;
+    //    effectData.targetPos = data.targetPos;
+    //    effectData.effectKey = data.effectKey;
+    //    effectData.effectVal = data.effectVal;
+    //    effectData.round = data.round;
+    //    effectData.cnt = data.cnt;
+    //}
 
     private void Hover(bool isActive)
     {
@@ -111,15 +111,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             if (result.gameObject.CompareTag("CharSlot"))
             {
-                if (battleMgr.UseCard(effectData, result.gameObject.transform.GetChild(0)))
-                {
-                    transform.SetParent(battleMgr.uiMgr.graveyard); // hand -> trash
-                    battleMgr.uiMgr.UpdateCntByChildren(battleMgr.uiMgr.graveyard);
-                }
-                else
-                {
-                    Restore();
-                }
+                //if (battleMgr.UseCard(effectData, result.gameObject.transform.GetChild(0)))
+                //{
+                //    transform.SetParent(battleMgr.uiMgr.graveyard); // hand -> trash
+                //    battleMgr.uiMgr.UpdateCntByChildren(battleMgr.uiMgr.graveyard);
+                //}
+                //else
+                //{
+                //    Restore();
+                //}
             }
             else
             {
