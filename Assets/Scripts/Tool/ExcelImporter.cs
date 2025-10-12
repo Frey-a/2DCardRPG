@@ -52,9 +52,11 @@ public class ExcelImporter : EditorWindow
 
                 if (dtoName == nameof(CardData))
                     db.cards = ParseTable<CardData>(reader);
+                else if (dtoName == nameof(EffectData))
+                    db.effects = ParseTable<EffectData>(reader);
                 else if (dtoName == nameof(CharData))
                     db.chars = ParseTable<CharData>(reader);
-                if (dtoName == nameof(MonsterData))
+                else if (dtoName == nameof(MonsterData))
                     db.monsters = ParseTable<MonsterData>(reader);
                 else if (dtoName == nameof(MonsterSequence))
                     db.sequences = ParseTable<MonsterSequence>(reader);
