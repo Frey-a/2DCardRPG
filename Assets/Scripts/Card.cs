@@ -7,7 +7,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 {
     private BattleMgr battleMgr;
     private CardData data; // 정보
-    //private EffectData effectData; // 효과 관련정보만 포함
     private int idx; // hand index
 
     public int id;
@@ -23,7 +22,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private void Start()
     {
         battleMgr = Object.FindFirstObjectByType<BattleMgr>();
-        //CreateEffectData();
     }
 
     public void SetData(int cardId)
@@ -33,25 +31,15 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         id = data.cardId;
         //img.sprite = 
         cardName.text = data.cardName;
-        //description.text = 
+        description.text = data.desc;
 
-        if (!data.charName.Equals(""))
+        if (!data.cardClass.Equals(""))
         {
             exclusive.SetActive(true);
             //charImg.sprite = 
-            charName.text = data.charName;
+            charName.text = data.cardClass;
         }
     }
-
-    //public void CreateEffectData()
-    //{
-    //    effectData.targetType = data.targetType;
-    //    effectData.targetPos = data.targetPos;
-    //    effectData.effectKey = data.effectKey;
-    //    effectData.effectVal = data.effectVal;
-    //    effectData.round = data.round;
-    //    effectData.cnt = data.cnt;
-    //}
 
     private void Hover(bool isActive)
     {
@@ -70,14 +58,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private void ChkTargetType()
     {
-        if (!data.targetPos.Equals("self"))
-        {
-            battleMgr.ActiveTarget(data.targetType);
-        }
-        else
-        {
-            battleMgr.ActiveTarget(data.targetPos);
-        }
+        battleMgr.ActiveTarget(data.effectKey);
     }
 
     public void OnPointerEnter(PointerEventData eventData) => Hover(true);

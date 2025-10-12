@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BattleMgr : MonoBehaviour
@@ -82,6 +83,7 @@ public class BattleMgr : MonoBehaviour
     {
         if(orderMgr.idx == 0)
         {
+            drawCnt = 2; // debug
             Draw(drawCnt);
         }
 
@@ -173,40 +175,69 @@ public class BattleMgr : MonoBehaviour
         uiMgr.UpdateCntByChildren(uiMgr.graveyard);
     }
 
-    public void ActiveTarget(string type)
+    public void ActiveTarget(string effectKey)
     {
-        if (Enum.TryParse<TargetType>(type, true, out TargetType target))
-        {
-            switch (target)
-            {
-                case TargetType.Enemy:
-                    foreach (Transform slot in uiMgr.enemies)
-                    {
-                        if(slot.childCount > 0)
-                        {
-                            uiMgr.ActiveSlot(slot);
-                        }
-                    }
-                    break;
+        EffectData effectData = InfoMgr.Instance.database.effects.Find(e => e.effectKey == effectKey);
+        List<Transform> targets = new List<Transform>();
 
-                case TargetType.Ally:
+        if (Enum.TryParse<TargetFaction>(effectData.targetFaction, true, out TargetFaction faction))
+        {
+            switch (faction)
+            {
+                case TargetFaction.ally:
                     foreach (Transform slot in uiMgr.allies)
                     {
                         if (slot.childCount > 0)
                         {
-                            uiMgr.ActiveSlot(slot);
+                            targets.Add(slot);
                         }
                     }
                     break;
 
-                case TargetType.Self:
-                    uiMgr.ActiveSlot(GetRecentAlly());
+                case TargetFaction.enemy:
+                    foreach (Transform slot in uiMgr.enemies)
+                    {
+                        if (slot.childCount > 0)
+                        {
+                            targets.Add(slot);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        if(Enum.TryParse<TargetOper>(effectData.targetOperator, true, out TargetOper oper))
+        {
+            switch(oper)
+            {
+                case TargetOper.position:
+                    for(int i = 0; i < targets.Count; i++)
+                    {
+                        if(effectData.targetPos / (1000 / Mathf.Pow(10, i)) == 1)
+                        {
+                            uiMgr.ActiveSlot(targets[i]);
+                        }
+                    }
+                    break;
+
+                case TargetOper.self:
+                    uiMgr.ActiveSlot(GetAllySelf());
+                    break;
+
+                default:
+                    if(targets != null)
+                    {
+                        foreach(Transform slot in targets)
+                        {
+                            uiMgr.ActiveSlot(slot);
+                        }
+                    }
                     break;
             }
         }
     }
 
-    private Transform GetRecentAlly()
+    private Transform GetAllySelf()
     {
         foreach (Transform slot in uiMgr.allies)
         {
@@ -224,10 +255,10 @@ public class BattleMgr : MonoBehaviour
         return null;
     }
 
-    //public bool UseCard(EffectData data, Transform select)
+    //public bool UseCard(EffectData data, Transform target)
     //{
     //    effectMgr.Effect(data, select);
-
+    //    uiMgr.ActiveAction(recentOrder, target);
     //    return true;
     //}
 }
