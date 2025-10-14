@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
     private BattleMgr battleMgr;
     private CardData data; // 정보
     private int idx; // hand index
+    private bool isSelect; // 타겟선택 필요여부
 
     public int id;
     public Image img;
@@ -21,7 +23,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     private void Start()
     {
-        battleMgr = Object.FindFirstObjectByType<BattleMgr>();
+        battleMgr = FindFirstObjectByType<BattleMgr>();
     }
 
     public void SetData(int cardId)
@@ -38,6 +40,45 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
             exclusive.SetActive(true);
             //charImg.sprite = 
             charName.text = data.cardClass;
+        }
+
+        GetIsSelect();
+    }
+
+    private void GetIsSelect()
+    {
+        EffectData effectData = InfoMgr.Instance.database.effects.Find(e => e.effectKey == data.effectKey);
+
+        if(Enum.TryParse<TargetFaction>(effectData.targetFaction, true, out TargetFaction faction))
+        {
+            switch (faction)
+            {
+                case TargetFaction.all:
+                    isSelect = false;
+                    break;
+
+                default:
+                    if (Enum.TryParse<TargetOper>(effectData.targetOperator, true, out TargetOper oper))
+                    {
+                        switch (oper)
+                        {
+                            case TargetOper.position:
+                            case TargetOper.all:
+                            case TargetOper.random:
+                                isSelect = false;
+                                break;
+
+                            default:
+                                isSelect = true;
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+        else
+        {
+            isSelect = false;
         }
     }
 
@@ -56,11 +97,6 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
     }
 
-    private void ChkTargetType()
-    {
-        battleMgr.ActiveTarget(data.effectKey);
-    }
-
     public void OnPointerEnter(PointerEventData eventData) => Hover(true);
 
     public void OnPointerExit(PointerEventData eventData) => Hover(false);
@@ -75,11 +111,12 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         transform.SetParent(transform.parent.parent);
         transform.rotation = Quaternion.identity;
 
-        ChkTargetType();
+        battleMgr.ActiveTarget(data.effectKey);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        bool skip = true; // raycast시 card무시
         PointerEventData pointerData = new PointerEventData(EventSystem.current)
         {
             position = Input.mousePosition
@@ -88,27 +125,56 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(pointerData, results);
 
-        foreach (RaycastResult result in results)
+        if(isSelect)
         {
-            if (result.gameObject.CompareTag("CharSlot"))
+            foreach (RaycastResult result in results)
             {
-                //if (battleMgr.UseCard(effectData, result.gameObject.transform.GetChild(0)))
-                //{
-                //    transform.SetParent(battleMgr.uiMgr.graveyard); // hand -> trash
-                //    battleMgr.uiMgr.UpdateCntByChildren(battleMgr.uiMgr.graveyard);
-                //}
-                //else
-                //{
-                //    Restore();
-                //}
+                if(skip)
+                {
+                    skip = false;
+                    continue;
+                }
+
+                if (result.gameObject.CompareTag("Char"))
+                {
+                    battleMgr.UseCard(data.effectKey, result.gameObject.transform);
+                    transform.SetParent(battleMgr.uiMgr.graveyard); // hand -> trash
+                    battleMgr.uiMgr.UpdateCntByChildren(battleMgr.uiMgr.graveyard);
+
+                    break;
+                }
+                else
+                {
+                    Restore();
+                }
             }
-            else
+        }
+        else
+        {
+            foreach (RaycastResult result in results)
             {
-                Restore();
+                if (skip)
+                {
+                    skip = false;
+                    continue;
+                }
+                
+                if (result.gameObject.CompareTag("CharPanel"))
+                {
+                    battleMgr.UseCard(data.effectKey);
+                    transform.SetParent(battleMgr.uiMgr.graveyard); // hand -> trash
+                    battleMgr.uiMgr.UpdateCntByChildren(battleMgr.uiMgr.graveyard);
+
+                    break;
+                }
+                else
+                {
+                    Restore();
+                }
             }
         }
 
+        battleMgr.InactiveTarget();
         DragMgr.Instance.EndDrag();
-        ChkTargetType();
     }
 }

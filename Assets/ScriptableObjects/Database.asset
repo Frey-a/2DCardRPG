@@ -28,13 +28,79 @@ MonoBehaviour:
     vfx: 
     sfx: 
     duration: 0
+  - cardId: 2
+    cardName: "\uCF54\uC694\uD14C\uD380\uCE58"
+    cardClass: koyote
+    cardCategory: burst
+    cardGroup: 
+    rarity: rare
+    cardKeyword: 
+    desc: "\uCF54\uC694\uD14C\uAC00 \uCCD0\uC694"
+    effectKey: koyopunch
+    rarityIcon: 
+    classIcon: 
+    categoryIcon: 
+    vfx: 
+    sfx: 
+    duration: 0
+  - cardId: 3
+    cardName: "\uCF54\uC694\uD14C\uD314\uCF58\uD380\uCE58"
+    cardClass: koyote
+    cardCategory: 
+    cardGroup: 
+    rarity: rare
+    cardKeyword: 
+    desc: "\uCF54\uC694\uD14C\uAC00 \uAC1C\uC314\uAC8C \uCCD0\uC694"
+    effectKey: koyoppunch
+    rarityIcon: 
+    classIcon: 
+    categoryIcon: 
+    vfx: 
+    sfx: 
+    duration: 0
   effects:
   - effectKey: koyodream
     type: draw
-    targetFaction: all
+    targetFaction: 
     targetOperator: 
     targetPos: 0
     val: 1
+    pushVal: 0
+    refOperator: 
+    refTarget: 
+    refType: 
+    conditionVal: 0
+    conditionMore: 
+    repeatTarget: 
+    repeatCnt: 0
+    refVal: 0
+    searchRange: 
+    searchType: 
+    searchId: 0
+  - effectKey: koyopunch
+    type: damage
+    targetFaction: enemy
+    targetOperator: position
+    targetPos: 1000
+    val: 5
+    pushVal: 0
+    refOperator: 
+    refTarget: 
+    refType: 
+    conditionVal: 0
+    conditionMore: 
+    repeatTarget: 
+    repeatCnt: 0
+    refVal: 0
+    searchRange: 
+    searchType: 
+    searchId: 0
+  - effectKey: koyoppunch
+    type: damage
+    targetFaction: enemy
+    targetOperator: single
+    targetPos: 0
+    val: 50
     pushVal: 0
     refOperator: 
     refTarget: 

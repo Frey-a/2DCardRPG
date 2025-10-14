@@ -1,36 +1,96 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
-
-public enum TargetType
-{ 
-    Enemy,
-    Ally,
-    Self
-}
-
-public enum EffectType
-{
-    Damage,
-    Heal
-}
 
 public class EffectMgr : MonoBehaviour
 {
-    //public void Effect()
-    //{
-    //    if(Enum.TryParse(, true, out EffectType type))
-    //    {
-    //        switch (type)
-    //        {
-    //            case EffectType.Damage:
-    //                Damage();
-    //                break;
+    private Dictionary<string, Action<EffectData>> effectDic;
+    private Dictionary<string, Action<EffectData, Transform>> selectEffectDic;
+    private Action<int> draw;
 
-    //            case EffectType.Heal:
-    //                Heal();
-    //                break;
+    private EffectMgr()
+    {
+        RegisterEffects();
+    }
 
-    //        }
-    //    }
-    //}
+    private void Start()
+    {
+        BattleMgr battleMgr = GetComponent<BattleMgr>();
+        draw = battleMgr.Draw;
+    }
+
+    private void RegisterEffects()
+    {
+        effectDic = new Dictionary<string, Action<EffectData>>();
+        selectEffectDic = new Dictionary<string, Action<EffectData, Transform>>();
+        MethodInfo[] methods = GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
+        
+        foreach (MethodInfo method in methods)
+        {
+            string key = method.Name.ToLower(); // 엑셀 키와 동일하게
+            ParameterInfo[] parameters = method.GetParameters();
+
+            try
+            {
+                if (parameters.Length == 1 &&
+                    parameters[0].ParameterType == typeof(EffectData))
+                {
+                    Action<EffectData> action =
+                        (Action<EffectData>)Delegate.CreateDelegate(typeof(Action<EffectData>), this, method);
+                    effectDic[key] = action;
+                }
+                else if (parameters.Length == 2 &&
+                         parameters[0].ParameterType == typeof(EffectData) &&
+                         parameters[1].ParameterType == typeof(Transform))
+                {
+                    Action<EffectData, Transform> action =
+                        (Action<EffectData, Transform>)Delegate.CreateDelegate(typeof(Action<EffectData, Transform>), this, method);
+                    selectEffectDic[key] = action;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"⚠️ '{method.Name}' 매핑 실패: {e.Message}");
+            }
+        }
+    }
+
+    public void Effect(string effectKey)
+    {
+        EffectData effectData = InfoMgr.Instance.database.effects.Find(e => e.effectKey == effectKey);
+
+        if(effectDic.TryGetValue(effectData.type, out var action))
+        {
+            action.Invoke(effectData);
+        }
+    }
+
+    public void Effect(string effectKey, Transform target)
+    {
+        EffectData effectData = InfoMgr.Instance.database.effects.Find(e => e.effectKey == effectKey);
+
+        if (selectEffectDic.TryGetValue(effectData.type, out var action))
+        {
+            // 여기에 타입별 분기(single / next)
+            action.Invoke(effectData, target);
+        }
+    }
+
+    private void Draw(EffectData data)
+    {
+        draw.Invoke(data.val);
+    }
+
+    private void Damage(EffectData data, Transform target)
+    {
+        if(target.TryGetComponent<PlayableChar>(out PlayableChar componentC))
+        {
+            componentC.Damage(data.val);
+        }
+        else if(target.TryGetComponent<Monster>(out Monster componentM))
+        {
+            componentM.Damage(data.val);
+        }
+    }
 }

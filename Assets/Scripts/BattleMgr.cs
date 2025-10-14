@@ -6,6 +6,7 @@ public class BattleMgr : MonoBehaviour
 {
     private (bool isEnemy, int id) recentOrder; // 현재 순서
     private int drawCnt;
+    private List<Transform> autoTarget; // target지정을 안하는 카드들의 target
 
     public BattleUIMgr uiMgr;
     public BattleOrderMgr orderMgr;
@@ -15,6 +16,7 @@ public class BattleMgr : MonoBehaviour
     {
         CreateScene();
         orderMgr.OnDicePhaseEnd += StartBattle; // 코루틴 종료시 실행
+        autoTarget = new List<Transform>();
     }
 
     private void CreateScene()
@@ -178,7 +180,8 @@ public class BattleMgr : MonoBehaviour
     public void ActiveTarget(string effectKey)
     {
         EffectData effectData = InfoMgr.Instance.database.effects.Find(e => e.effectKey == effectKey);
-        List<Transform> targets = new List<Transform>();
+        List<Transform> range = new List<Transform>();
+        autoTarget.Clear();
 
         if (Enum.TryParse<TargetFaction>(effectData.targetFaction, true, out TargetFaction faction))
         {
@@ -189,7 +192,7 @@ public class BattleMgr : MonoBehaviour
                     {
                         if (slot.childCount > 0)
                         {
-                            targets.Add(slot);
+                            range.Add(slot);
                         }
                     }
                     break;
@@ -199,7 +202,24 @@ public class BattleMgr : MonoBehaviour
                     {
                         if (slot.childCount > 0)
                         {
-                            targets.Add(slot);
+                            range.Add(slot);
+                        }
+                    }
+                    break;
+
+                case TargetFaction.all:
+                    foreach (Transform slot in uiMgr.allies)
+                    {
+                        if (slot.childCount > 0)
+                        {
+                            range.Add(slot);
+                        }
+                    }
+                    foreach (Transform slot in uiMgr.enemies)
+                    {
+                        if (slot.childCount > 0)
+                        {
+                            range.Add(slot);
                         }
                     }
                     break;
@@ -211,43 +231,89 @@ public class BattleMgr : MonoBehaviour
             switch(oper)
             {
                 case TargetOper.position:
-                    for(int i = 0; i < targets.Count; i++)
+                    for(int i = 0; i < range.Count; i++)
                     {
                         if(effectData.targetPos / (1000 / Mathf.Pow(10, i)) == 1)
                         {
-                            uiMgr.ActiveSlot(targets[i]);
+                            uiMgr.ActiveSlot(range[i], true);
+                            autoTarget.Add(range[i].GetChild(0));
                         }
                     }
                     break;
 
                 case TargetOper.self:
-                    uiMgr.ActiveSlot(GetAllySelf());
+                    uiMgr.ActiveSlot(GetSelfSlot(), true);
+                    autoTarget.Add(GetSelfSlot().GetChild(0));
                     break;
 
-                default:
-                    if(targets != null)
+                case TargetOper.all:
+                    foreach(Transform slot in range)
                     {
-                        foreach(Transform slot in targets)
-                        {
-                            uiMgr.ActiveSlot(slot);
-                        }
+                        autoTarget.Add(slot.GetChild(0));
+                    }
+                    goto default;
+
+                case TargetOper.random:
+                    autoTarget.Add(range[UnityEngine.Random.Range(0, range.Count)].GetChild(0));
+                    goto default;
+
+                default:
+                    foreach(Transform slot in range)
+                    {
+                        uiMgr.ActiveSlot(slot, true);
                     }
                     break;
             }
         }
     }
 
-    private Transform GetAllySelf()
+    public void InactiveTarget()
     {
         foreach (Transform slot in uiMgr.allies)
         {
             if (slot.childCount > 0)
             {
-                PlayableChar character = slot.GetComponentInChildren<PlayableChar>();
+                uiMgr.ActiveSlot(slot, false);
+            }
+        }
+        foreach (Transform slot in uiMgr.enemies)
+        {
+            if (slot.childCount > 0)
+            {
+                uiMgr.ActiveSlot(slot, false);
+            }
+        }
+    }
 
-                if (recentOrder.id == character.id)
+    private Transform GetSelfSlot()
+    {
+        if(!recentOrder.isEnemy)
+        {
+            foreach (Transform slot in uiMgr.allies)
+            {
+                if (slot.childCount > 0)
                 {
-                    return slot;
+                    PlayableChar character = slot.GetComponentInChildren<PlayableChar>();
+
+                    if (recentOrder.id == character.id)
+                    {
+                        return slot;
+                    }
+                }
+            }
+        }
+        else
+        {
+            foreach (Transform slot in uiMgr.allies)
+            {
+                if (slot.childCount > 0)
+                {
+                    PlayableChar character = slot.GetComponentInChildren<PlayableChar>();
+
+                    if (recentOrder.id == character.id)
+                    {
+                        return slot;
+                    }
                 }
             }
         }
@@ -255,10 +321,23 @@ public class BattleMgr : MonoBehaviour
         return null;
     }
 
-    //public bool UseCard(EffectData data, Transform target)
-    //{
-    //    effectMgr.Effect(data, select);
-    //    uiMgr.ActiveAction(recentOrder, target);
-    //    return true;
-    //}
+    public void UseCard(string effectKey)
+    {
+        if(autoTarget.Count > 0)
+        {
+            foreach (Transform target in autoTarget)
+            {
+                UseCard(effectKey, target);
+            }
+        }
+        else
+        {
+            effectMgr.Effect(effectKey);
+        }
+    }
+
+    public void UseCard(string effectKey, Transform target)
+    {
+        effectMgr.Effect(effectKey, target);
+    }
 }

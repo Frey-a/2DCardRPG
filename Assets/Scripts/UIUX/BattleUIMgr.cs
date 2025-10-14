@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
 public class BattleUIMgr : MonoBehaviour
@@ -10,6 +12,7 @@ public class BattleUIMgr : MonoBehaviour
     public Transform hand;
     public Transform graveyard;
     public Transform cardInfo;
+    public Transform actionPanel; // 연출UI
 
     public void UpdateCntByChildren(Transform trans)
     {
@@ -83,9 +86,72 @@ public class BattleUIMgr : MonoBehaviour
         cardInfo.gameObject.SetActive(isActive);
     }
 
-    public void ActiveSlot(Transform slot)
+    public void ActiveSlot(Transform slot, bool isactive)
     {
         Image img = slot.GetChild(0).GetComponent<Image>();
-        img.enabled = !img.IsActive();
+
+        if(img.enabled != isactive)
+        {
+            img.enabled = isactive;
+        }
+    }
+
+    public void ActiveAction((bool isEnemy, int id) recentOrder, Transform target)
+    {
+        // 이미지 전부 idle상태 -> 조금 대기 -> 공격자 스프라이트 -> 애니메이션 실행 -> 종료시 피격자 스프라이트 및 이펙트 -> 종료
+        actionPanel.gameObject.SetActive(true);
+
+        foreach (Transform area in actionPanel)
+        {
+            if(recentOrder.isEnemy)
+            {
+                if (area.CompareTag("Enemy"))
+                {
+                    string spriteKey;
+
+                    //Addressables.LoadAssetAsync<Sprite>(spriteKey).Completed += (AsyncOperationHandle<Sprite> handle) =>
+                    //{
+                    //    if (handle.Status == AsyncOperationStatus.Succeeded)
+                    //    {
+                    //        targetImage.sprite = handle.Result;
+                    //    }
+                    //    else
+                    //    {
+                    //        Debug.LogError($"스프라이트 로드 실패: {spriteKey}");
+                    //    }
+                    //};
+                }
+            }
+            else
+            {
+                if (area.CompareTag("Ally"))
+                {
+
+                }
+            }
+        }
+    }
+
+    public void PlayMoveArrow(bool toRight, bool enemyFront)
+    {
+        //// 방향 설정 (오른쪽 true, 왼쪽 false)
+        //Vector3 allyScale = allyArrow.localScale;
+        //Vector3 enemyScale = enemyArrow.localScale;
+
+        //float dir = toRight ? 1f : -1f;
+        //allyScale.x = Mathf.Abs(allyScale.x) * dir;
+        //enemyScale.x = Mathf.Abs(enemyScale.x) * dir;
+
+        //allyArrow.localScale = allyScale;
+        //enemyArrow.localScale = enemyScale;
+
+        //// 겹쳤을 때 순서
+        //if (!enemyFront) // last X -> 2번째자식
+        //    allyArrow.SetAsLastSibling();
+        //else
+        //    enemyArrow.SetAsLastSibling();
+
+        //// 애니메이션 실행
+        //animator.Play("ArrowMove", -1, 0f);
     }
 }
