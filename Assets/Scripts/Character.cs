@@ -22,14 +22,8 @@ public abstract class Character : MonoBehaviour
 
         if (handle.Status == AsyncOperationStatus.Succeeded)
         {
-            OnLoaded(handle.Result);
+            AdjustRatio(handle.Result);
         }
-    }
-
-    protected virtual void OnLoaded(Sprite asset)
-    {
-        img.sprite = asset;
-        AdjustRatio(asset);
     }
 
     protected virtual void AdjustRatio(Sprite sprite) // coyote기준
@@ -41,6 +35,7 @@ public abstract class Character : MonoBehaviour
         float targetW = img.rectTransform.sizeDelta.x;
         float targetH = targetW * ratio;
 
+        img.sprite = sprite;
         img.rectTransform.sizeDelta = new Vector2(targetW, targetH);
 
         RectTransform imgTrans = img.rectTransform;

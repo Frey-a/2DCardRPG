@@ -31,12 +31,11 @@ public class BattleMgr : MonoBehaviour
                     PlayableChar character = characterObj.GetComponent<PlayableChar>();
 
                     character.SetData(charId);
+                    orderMgr.CreateDice(charId, false, character.spriteRoot); // 초상화 추가후 변경
                     drawCnt += character.GetDrawCnt();
                     break;
                 }
             }
-
-            orderMgr.CreateDice(charId, false);
         }
 
         foreach(int monsterId in InfoMgr.Instance.GetMonsterIds()) // enemy
@@ -57,11 +56,10 @@ public class BattleMgr : MonoBehaviour
                     Monster monster = monsterObj.GetComponent<Monster>();
 
                     monster.SetData(monsterId);
+                    orderMgr.CreateDice(monsterId, true, monster.spriteRoot);
                     break;
                 }
-            }
-
-            orderMgr.CreateDice(monsterId, true);
+            } 
         }
 
         foreach(int cardId in InfoMgr.Instance.GetCardIds()) // card
@@ -77,11 +75,10 @@ public class BattleMgr : MonoBehaviour
 
     private void StartBattle()
     {
-        for (int i = 0; i < InfoMgr.Instance.GetCharIds().Count + InfoMgr.Instance.GetMonsterIds().Count; i++)
+        do
         {
-            recentOrder = orderMgr.ChkOrder();
-            uiMgr.CreateOrderImg(recentOrder);
-        }
+            uiMgr.CreateOrderImg(orderMgr.ChkOrder());
+        } while (orderMgr.idx != 0);
 
         // 시작연출 필요
         StartOrder();
@@ -114,7 +111,7 @@ public class BattleMgr : MonoBehaviour
 
         foreach (Transform slot in group)
         {
-            if (slot.childCount == 0)
+            if (slot.childCount < 1)
             {
                 break;
             }
@@ -308,16 +305,11 @@ public class BattleMgr : MonoBehaviour
         {
             // 타겟 없음
             effectMgr.Effect(effectKey);
-            InactiveTarget();
             return;
         }
 
         InactiveTarget();
 
-        string spriteRoot = recentOrder.isEnemy
-            ? GetOrderSlot().GetComponentInChildren<Monster>().spriteRoot
-            : GetOrderSlot().GetComponentInChildren<PlayableChar>().spriteRoot;
-
-        uiMgr.ActiveAction(recentOrder.isEnemy, spriteRoot, targets);
+        uiMgr.ActiveAction(GetOrderSlot().GetChild(0), targets);
     }
 }

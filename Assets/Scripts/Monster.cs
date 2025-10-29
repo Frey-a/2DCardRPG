@@ -24,7 +24,7 @@ public class Monster : Character
 
         SortPriority();
 
-        //SetSprite("Idle");
+        SetSprite("Idle");
         UpdateHp();
     }
 

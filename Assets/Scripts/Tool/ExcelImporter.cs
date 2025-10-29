@@ -39,26 +39,26 @@ public class ExcelImporter : EditorWindow
         }
 
         string[] excelFiles = Directory.GetFiles(excelFolderPath, "*.xlsx");
-        string mappingPath = "Assets/Excels/ExcelMapping.json";
+        string mappingPath = excelFolderPath + "/ExcelMapping.json";
         ExcelMapping mapping = JsonUtility.FromJson<ExcelMapping>(File.ReadAllText(mappingPath));
 
         foreach (string file in excelFiles)
         {
-            using (var stream = File.Open(file, FileMode.Open, FileAccess.Read))
-            using (var reader = ExcelReaderFactory.CreateReader(stream))
+            using (FileStream stream = File.Open(file, FileMode.Open, FileAccess.Read))
+            using (IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream))
             {
                 string fileName = Path.GetFileName(file);
-                string dtoName = mapping.GetDTO(fileName);
+                string className = mapping.GetClass(fileName);
 
-                if (dtoName == nameof(CardData))
+                if (className == nameof(CardData))
                     db.cards = ParseTable<CardData>(reader);
-                else if (dtoName == nameof(EffectData))
+                else if (className == nameof(EffectData))
                     db.effects = ParseTable<EffectData>(reader);
-                else if (dtoName == nameof(CharData))
+                else if (className == nameof(CharData))
                     db.chars = ParseTable<CharData>(reader);
-                else if (dtoName == nameof(MonsterData))
+                else if (className == nameof(MonsterData))
                     db.monsters = ParseTable<MonsterData>(reader);
-                else if (dtoName == nameof(MonsterSequence))
+                else if (className == nameof(MonsterSequence))
                     db.sequences = ParseTable<MonsterSequence>(reader);
             }
         }
@@ -140,7 +140,7 @@ public class ExcelMapping
 {
     public List<ExcelMap> maps;
 
-    public string GetDTO(string fileName)
+    public string GetClass(string fileName)
     {
         ExcelMap map = maps.Find(x => x.fileName == fileName);
         return map != null ? map.dtoName : null;

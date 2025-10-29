@@ -775,8 +775,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1300781668533096325}
+  m_Children: []
   m_Father: {fileID: 3680008441767819331}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -812,7 +811,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: abb79ff9a58b4aa49b87ada3b9e64a28, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -890,6 +889,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3921426259771684863}
+  - {fileID: 1300781668533096325}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -948,6 +948,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  spriteRoot: 
   img: {fileID: 8060985561794278947}
   hp: {fileID: 4759714050839987297}
 --- !u!1 &6182260124727010800
@@ -1238,7 +1239,7 @@ RectTransform:
   - {fileID: 3842775299392666959}
   - {fileID: 8046728076503770460}
   - {fileID: 6543797000917857652}
-  m_Father: {fileID: 3921426259771684863}
+  m_Father: {fileID: 3680008441767819331}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}

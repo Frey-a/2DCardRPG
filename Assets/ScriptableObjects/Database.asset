@@ -200,7 +200,7 @@ MonoBehaviour:
     drawPoint: 2
   monsters:
   - monsterId: 12345
-    MonsterName: Hongryun
+    MonsterName: Hongryun_Beast
     maxHp: 500
     maxStagger: 10
     vfxStagger: 

@@ -112,7 +112,7 @@ public class Card : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
         }
 
-        transform.SetParent(battleMgr.uiMgr.graveyard); // hand -> trash
+        transform.SetParent(battleMgr.uiMgr.graveyard); // hand -> graveyard
         battleMgr.uiMgr.UpdateCntByChildren(battleMgr.uiMgr.graveyard);
     }
 

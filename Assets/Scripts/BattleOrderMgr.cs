@@ -31,7 +31,7 @@ public class BattleOrderMgr : MonoBehaviour
         idx = 0;
     }
 
-    public void CreateDice(int id, bool isEnemy)
+    public void CreateDice(int id, bool isEnemy, string spriteRoot)
     {
         GameObject slot;
         if (isEnemy)
@@ -42,7 +42,8 @@ public class BattleOrderMgr : MonoBehaviour
         {
             slot = Instantiate(dicePrefab, allies);
         }
-        Image img = slot.transform.GetChild(0).GetComponent<Image>(); // id를 통해 스프라이트 탐색 필요
+        Image img = slot.transform.GetChild(0).GetComponent<Image>();
+        _ = GetComponent<BattleUIMgr>().SetSprite(img, spriteRoot + "Idle"); // 프로필로 변경
 
         order.Add((0, 0, isEnemy, id));
         diceToOrderIndex[slot.transform] = order.Count - 1;
