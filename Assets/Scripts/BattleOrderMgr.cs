@@ -154,7 +154,7 @@ public class BattleOrderMgr : MonoBehaviour
         return recentOrder;
     }
 
-    public void DelOrder(int id)
+    public void DelOrder(int id) // 몬스터와 캐릭터가 겹치게 아이디를 만들 경우 변경 필요
     {
         order.Remove(order.Find(order => order.id == id));
     }

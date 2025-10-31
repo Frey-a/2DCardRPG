@@ -201,7 +201,7 @@ MonoBehaviour:
   monsters:
   - monsterId: 12345
     MonsterName: Hongryun_Beast
-    maxHp: 500
+    maxHp: 10
     maxStagger: 10
     vfxStagger: 
     breakStagger: 

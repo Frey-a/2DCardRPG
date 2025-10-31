@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -14,6 +15,8 @@ public class BattleUIMgr : MonoBehaviour
     public Transform hand;
     public Transform graveyard;
     public Transform cardInfo;
+
+    public event Action OnSpriteChangeFinished;
 
     public void UpdateCntByChildren(Transform trans)
     {
@@ -60,6 +63,20 @@ public class BattleUIMgr : MonoBehaviour
     public void UpdateOrderImg()
     {
         turnImgParent.GetChild(0).SetSiblingIndex(turnImgParent.childCount);
+    }
+
+    public void DelOrderImg(string spriteRoot)
+    {
+        foreach(Transform turnImg in turnImgParent)
+        {
+            Image img = turnImg.GetComponent<Image>();
+
+            if(img.sprite.name.Contains(spriteRoot))
+            {
+                Destroy(turnImg.gameObject);
+                break;
+            }
+        }
     }
 
     public void ActiveCardInfo(bool isActive, Transform card)
@@ -115,10 +132,15 @@ public class BattleUIMgr : MonoBehaviour
         attackerRectTrans.sizeDelta = originSize;
         await SetSprite(attakerImg, spriteRoot + "Idle");
 
+        OnSpriteChangeFinished?.Invoke();
+
         for (int i = 0; i < targets.Count; i++)
         {
-            targetRectTranses[i].sizeDelta = targetOriginSizes[i];
-            await SetSprite(targetImges[i], spriteRoots[i] + "Idle");
+            if (targets[i] != null)
+            {
+                targetRectTranses[i].sizeDelta = targetOriginSizes[i];
+                await SetSprite(targetImges[i], spriteRoots[i] + "Idle");
+            }
         }
     }
 

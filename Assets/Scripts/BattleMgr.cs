@@ -17,6 +17,7 @@ public class BattleMgr : MonoBehaviour
     {
         CreateScene();
         orderMgr.OnDicePhaseEnd += StartBattle; // 코루틴 종료시 실행
+        Character.OnCharDeath += DeathChar;
     }
 
     private void CreateScene()
@@ -311,5 +312,38 @@ public class BattleMgr : MonoBehaviour
         InactiveTarget();
 
         uiMgr.ActiveAction(GetOrderSlot().GetChild(0), targets);
+    }
+
+    private void DeathChar(Character character)
+    {
+        orderMgr.DelOrder(character.id);
+
+        void Delete()
+        {
+            uiMgr.OnSpriteChangeFinished -= Delete;
+            Destroy(character.gameObject);
+            uiMgr.DelOrderImg(character.spriteRoot);
+
+            Transform slot = character.transform.parent;
+            int idx = slot.GetSiblingIndex();
+
+            for (; idx < slot.parent.childCount - 1; idx++)
+            {
+                Transform nextSlot = slot.parent.GetChild(idx + 1);
+
+                if (nextSlot.childCount > 0)
+                {
+                    Transform nextChar = nextSlot.GetChild(0);
+                    Vector2 localPos = nextChar.localPosition;
+
+                    nextChar.SetParent(slot);
+                    nextChar.localPosition = localPos;
+
+                    slot = nextSlot;
+                }
+            }
+        }
+
+        uiMgr.OnSpriteChangeFinished += Delete;
     }
 }

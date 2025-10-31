@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
@@ -12,6 +13,8 @@ public abstract class Character : MonoBehaviour
     public string spriteRoot;
     public Image img;
     public RectTransform hp;
+
+    public static event Action<Character> OnCharDeath;
 
     public abstract void SetData(int id);
 
@@ -65,6 +68,7 @@ public abstract class Character : MonoBehaviour
         if (status.hp < 0)
         {
             status.hp = 0;
+            OnCharDeath?.Invoke(this);
         }
 
         UpdateHp();
