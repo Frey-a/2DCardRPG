@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -8,6 +7,9 @@ using UnityEngine.UI;
 
 public class BattleUIMgr : MonoBehaviour
 {
+    private int startCnt = 0; // 스프라이트 변경 코루틴 호출 수
+    private int endCnt = 0; // 끝난 코루틴 수
+
     public Transform turnImgParent;
     public Transform allies; // 캐릭터 생성 위치
     public Transform enemies; // 적 생성 위치
@@ -16,6 +18,7 @@ public class BattleUIMgr : MonoBehaviour
     public Transform graveyard;
     public Transform cardInfo;
 
+    public event Action OnSpriteChangeHit;
     public event Action OnSpriteChangeFinished;
 
     public void UpdateCntByChildren(Transform trans)
@@ -25,7 +28,8 @@ public class BattleUIMgr : MonoBehaviour
 
     public void CreateOrderImg((bool isEnemy, int id) order)
     {
-        GameObject turnImg = new GameObject("TurnImg", typeof(RectTransform), typeof(Image));
+        int orderIdx = turnImgParent.childCount;
+        GameObject turnImg = new GameObject("TurnImg" + orderIdx, typeof(RectTransform), typeof(Image));
         turnImg.transform.SetParent(turnImgParent, false);
 
         Image img = turnImg.GetComponent<Image>();
@@ -34,18 +38,23 @@ public class BattleUIMgr : MonoBehaviour
         Transform trans = order.isEnemy ? enemies : allies;
         foreach (Transform slot in trans)
         {
-            if (slot.childCount < 1)
+            if (slot.childCount < 1 && slot.gameObject.activeSelf)
             {
                 break;
             }
+            else if (!slot.gameObject.activeSelf)
+            {
+                continue;
+            }
 
-            if(order.isEnemy)
+            if (order.isEnemy)
             {
                 Monster monster = slot.GetComponentInChildren<Monster>();
 
                 if (monster.id == order.id)
                 {
-                    _ = SetSprite(img, monster.spriteRoot + "Idle");
+                    StartCoroutine(CoSetSprite(img, monster.spriteRoot + "Idle"));
+                    monster.orderIdx = orderIdx;
                 }
             }
             else
@@ -54,7 +63,8 @@ public class BattleUIMgr : MonoBehaviour
 
                 if (character.id == order.id)
                 {
-                    _ = SetSprite(img, character.spriteRoot + "Idle");
+                    StartCoroutine(CoSetSprite(img, character.spriteRoot + "Idle"));
+                    character.orderIdx = orderIdx;
                 }
             }
         }
@@ -65,13 +75,11 @@ public class BattleUIMgr : MonoBehaviour
         turnImgParent.GetChild(0).SetSiblingIndex(turnImgParent.childCount);
     }
 
-    public void DelOrderImg(string spriteRoot)
+    public void DelOrderImg(int orderIdx)
     {
         foreach(Transform turnImg in turnImgParent)
         {
-            Image img = turnImg.GetComponent<Image>();
-
-            if(img.sprite.name.Contains(spriteRoot))
+            if(turnImg.name.Contains(orderIdx.ToString()))
             {
                 Destroy(turnImg.gameObject);
                 break;
@@ -101,53 +109,34 @@ public class BattleUIMgr : MonoBehaviour
         }
     }
 
-    public async void ActiveAction(Transform attacker, List<Transform> targets) // spriteKey 받아야함
+    public IEnumerator CoChgSprite(Transform character, string spriteKey)
     {
-        RectTransform attackerRectTrans = attacker.GetComponent<RectTransform>();
-        Vector2 originSize = attackerRectTrans.sizeDelta; // Idle 크기 복구용
-        Image attakerImg = attacker.GetChild(0).GetComponent<Image>();
-        string spriteRoot = attacker.GetComponent<Character>().spriteRoot;
+        startCnt++;
 
-        await SetSprite(attakerImg, spriteRoot + "Attack");
-        AdjustXRatio(attakerImg);
+        Vector2 originSize = character.GetChild(0).GetComponent<RectTransform>().sizeDelta; // Idle 크기 복구용
+        Image characterImg = character.GetChild(0).GetComponent<Image>();
+        Sprite idle = characterImg.sprite;
 
-        List<RectTransform> targetRectTranses = new List<RectTransform>();
-        List<Vector2> targetOriginSizes = new List<Vector2>();
-        List<Image> targetImges = new List<Image>();
-        List<string> spriteRoots = new List<string>();
+        yield return StartCoroutine(CoSetSprite(characterImg, spriteKey));
+        AdjustRatio(characterImg, idle);
 
-        for (int i = 0; i < targets.Count; i++)
+        yield return new WaitForSeconds(1f); // 1초 대기
+        OnSpriteChangeHit?.Invoke(); // deathChar
+        yield return null; // destroy 처리
+
+        if (characterImg != null)
         {
-            targetRectTranses.Add(targets[i].GetComponent<RectTransform>());
-            targetOriginSizes.Add(targetRectTranses[i].sizeDelta);
-            targetImges.Add(targets[i].GetChild(0).GetComponent<Image>());
-            spriteRoots.Add(targets[i].GetComponent<Character>().spriteRoot);
-
-            await SetSprite(targetImges[i], spriteRoots[i] + "Hit");
-            AdjustXRatio(targetImges[i]);
+            characterImg.sprite = idle;
+            characterImg.rectTransform.sizeDelta = originSize;
         }
 
-        await Task.Delay(1000); // 1초 대기
-
-        attackerRectTrans.sizeDelta = originSize;
-        await SetSprite(attakerImg, spriteRoot + "Idle");
-
-        OnSpriteChangeFinished?.Invoke();
-
-        for (int i = 0; i < targets.Count; i++)
-        {
-            if (targets[i] != null)
-            {
-                targetRectTranses[i].sizeDelta = targetOriginSizes[i];
-                await SetSprite(targetImges[i], spriteRoots[i] + "Idle");
-            }
-        }
+        endCnt++;
     }
 
-    public async Task SetSprite(Image img, string spriteKey)
+    public IEnumerator CoSetSprite(Image img, string spriteKey)
     {
         AsyncOperationHandle<Sprite> handle = Addressables.LoadAssetAsync<Sprite>(spriteKey);
-        await handle.Task;
+        yield return handle;
 
         if (handle.Status == AsyncOperationStatus.Succeeded)
         {
@@ -159,15 +148,24 @@ public class BattleUIMgr : MonoBehaviour
         }
     }
 
-    private void AdjustXRatio(Image img)
+    private void AdjustRatio(Image img, Sprite before)
     {
         RectTransform imgTrans = img.rectTransform;
         Vector2 originSize = imgTrans.sizeDelta;
 
-        float ratioW = img.sprite.rect.width / 1000f;
+        float ratioW = img.sprite.rect.width / before.rect.width;
+        float ratioH = img.sprite.rect.height / before.rect.height;
 
         float targetW = originSize.x * ratioW;
+        float targetH = originSize.y * ratioH;
 
-        imgTrans.sizeDelta = new Vector2(targetW, originSize.y);
+        imgTrans.sizeDelta = new Vector2(targetW, targetH);
+    }
+
+    public IEnumerator CoWaitChgSprite()
+    {
+        yield return new WaitUntil(() => endCnt == startCnt);
+
+        OnSpriteChangeFinished?.Invoke(); // endOrder
     }
 }

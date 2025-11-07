@@ -95,6 +95,7 @@ public class MonsterData
 {
     public int monsterId;
     public string MonsterName;
+    public bool isBig; // 2칸 여부
     public int maxHp;
     public int maxStagger; // 무력화
     public string vfxStagger;

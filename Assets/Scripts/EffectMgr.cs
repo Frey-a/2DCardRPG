@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -8,6 +9,8 @@ public class EffectMgr : MonoBehaviour
     private Dictionary<string, Action<EffectData>> effectDic;
     private Dictionary<string, Action<EffectData, Transform>> selectEffectDic;
     private Action<int> draw;
+    private Func<Transform, string, IEnumerator> chgSprite;
+    private string key;
 
     private EffectMgr()
     {
@@ -18,6 +21,7 @@ public class EffectMgr : MonoBehaviour
     {
         BattleMgr battleMgr = GetComponent<BattleMgr>();
         draw = battleMgr.Draw;
+        chgSprite = battleMgr.uiMgr.CoChgSprite;
     }
 
     private void RegisterEffects()
@@ -56,29 +60,27 @@ public class EffectMgr : MonoBehaviour
         }
     }
 
-    public void Effect(string effectKey)
+    public string Effect(string effectKey, Transform target = null)
     {
         EffectData effectData = InfoMgr.Instance.database.effects.Find(e => e.effectKey == effectKey);
 
-        if(effectDic.TryGetValue(effectData.type, out Action<EffectData> action))
+        if(target != null)
         {
-            action.Invoke(effectData);
+            if (selectEffectDic.TryGetValue(effectData.type, out Action<EffectData, Transform> effect))
+            {
+                // 여기에 타입별 분기(single / next)
+                effect.Invoke(effectData, target);
+            }
         }
-    }
-
-    public List<Transform> Effect(string effectKey, Transform target)
-    {
-        EffectData effectData = InfoMgr.Instance.database.effects.Find(e => e.effectKey == effectKey);
-        List<Transform> targets = new List<Transform>();
-
-        if (selectEffectDic.TryGetValue(effectData.type, out Action<EffectData, Transform> effect))
+        else
         {
-            // 여기에 타입별 분기(single / next)
-            effect.Invoke(effectData, target);
-            targets.Add(target);
+            if (effectDic.TryGetValue(effectData.type, out Action<EffectData> action))
+            {
+                action.Invoke(effectData);
+            }
         }
 
-        return targets;
+        return key;
     }
 
     private void Draw(EffectData data)
@@ -96,5 +98,23 @@ public class EffectMgr : MonoBehaviour
         {
             componentM.Damage(data.val);
         }
+
+        StartCoroutine(chgSprite(target, target.GetComponent<Character>().spriteRoot + "Hit"));
+        key = "Attack";
+    }
+
+    private void Heal(EffectData data, Transform target)
+    {
+        if (target.TryGetComponent<PlayableChar>(out PlayableChar componentC))
+        {
+            componentC.Heal(data.val);
+        }
+        else if (target.TryGetComponent<Monster>(out Monster componentM))
+        {
+            componentM.Heal(data.val);
+        }
+
+        StartCoroutine(chgSprite(target, target.GetComponent<Character>().spriteRoot + "Heal"));
+        key = "Heal";
     }
 }

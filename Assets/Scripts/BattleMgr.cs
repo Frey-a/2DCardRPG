@@ -34,31 +34,50 @@ public class BattleMgr : MonoBehaviour
                     character.SetData(charId);
                     orderMgr.CreateDice(charId, false, character.spriteRoot); // 초상화 추가후 변경
                     drawCnt += character.GetDrawCnt();
-                    break;
+
+                    break; // 하나 생성하면 다음 id
                 }
             }
         }
 
-        foreach(int monsterId in InfoMgr.Instance.GetMonsterIds()) // enemy
+        bool isBlank = false;
+        foreach (int monsterId in InfoMgr.Instance.GetMonsterIds()) // enemy
         {
             foreach (Transform slot in uiMgr.enemies)
             {
-                if (slot.childCount < 1)
+                if (isBlank)
                 {
-                    GameObject monsterObj = Instantiate(InfoMgr.Instance.bigMonsterPrefab, slot);
-                    //if (InfoMgr.Instance.database.monsters.Find(m => m.monsterId == monsterId).)
-                    //{
-                    //    monsterObj = Instantiate(InfoMgr.Instance.monsterPrefab, slot);
-                    //}
-                    //else
-                    //{
-                    //    monsterObj = Instantiate(InfoMgr.Instance.bigMonsterPrefab, slot);
-                    //}
+                    slot.gameObject.SetActive(false);
+                    isBlank = false;
+                    break;
+                }
+
+                if (slot.gameObject.activeSelf && slot.childCount < 1 && !isBlank)
+                {
+                    GameObject monsterObj;
+
+                    if (!InfoMgr.Instance.database.monsters.Find(m => m.monsterId == monsterId).isBig)
+                    {
+                        monsterObj = Instantiate(InfoMgr.Instance.monsterPrefab, slot);
+                    }
+                    else
+                    {
+                        monsterObj = Instantiate(InfoMgr.Instance.bigMonsterPrefab, slot);
+                        isBlank = true;
+                    }
                     Monster monster = monsterObj.GetComponent<Monster>();
 
                     monster.SetData(monsterId);
                     orderMgr.CreateDice(monsterId, true, monster.spriteRoot);
-                    break;
+
+                    if(!isBlank)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
             } 
         }
@@ -87,7 +106,7 @@ public class BattleMgr : MonoBehaviour
 
     private void StartOrder()
     {
-        if(orderMgr.idx == 0) // 라운드 시작시
+        if (orderMgr.idx == 0) // 라운드 시작시
         {
             drawCnt = 2; // debug
             Draw(drawCnt);
@@ -100,9 +119,9 @@ public class BattleMgr : MonoBehaviour
         if (recentOrder.isEnemy)
         {
             Monster monster = GetOrderSlot().GetComponentInChildren<Monster>();
-            monster.UseCard();
 
-            EndOrder();
+            uiMgr.OnSpriteChangeFinished += EndOrder;
+            monster.UseCard();
         }
     }
 
@@ -112,9 +131,13 @@ public class BattleMgr : MonoBehaviour
 
         foreach (Transform slot in group)
         {
-            if (slot.childCount < 1)
+            if (slot.childCount < 1 && slot.gameObject.activeSelf)
             {
                 break;
+            }
+            else if(!slot.gameObject.activeSelf)
+            {
+                continue;
             }
 
             Character character = recentOrder.isEnemy
@@ -126,12 +149,14 @@ public class BattleMgr : MonoBehaviour
                 return slot;
             }
         }
-
+        
         return null;
     }
 
     public void EndOrder()
     {
+        uiMgr.OnSpriteChangeFinished -= EndOrder;
+
         uiMgr.UpdateOrderImg();
         StartOrder();
     }
@@ -179,6 +204,7 @@ public class BattleMgr : MonoBehaviour
     public void ActiveTarget(string effectKey)
     {
         EffectData effectData = InfoMgr.Instance.database.effects.Find(e => e.effectKey == effectKey);
+        List<int> blankIdx = new List<int>();
         range.Clear();
         autoTarget.Clear();
 
@@ -202,6 +228,10 @@ public class BattleMgr : MonoBehaviour
                         if (slot.childCount > 0)
                         {
                             range.Add(slot);
+                        }
+                        else if (!slot.gameObject.activeSelf)
+                        {
+                            blankIdx.Add(slot.GetSiblingIndex());
                         }
                     }
                     break;
@@ -231,13 +261,22 @@ public class BattleMgr : MonoBehaviour
             {
                 case TargetOper.position:
                     int pos = effectData.targetPos;
-                    for (int i = 0; i < range.Count; i++)
+                    int idx = 0;
+                    for (int i = 0; i < range.Count + blankIdx.Count; i++)
                     {
                         int divisor = 1000 / (int)Mathf.Pow(10, i);
+
+                        if(blankIdx.Contains(i))
+                        {
+                            pos %= divisor;
+                            continue;
+                        }
+
                         if (pos / divisor == 1)
                         {
-                            uiMgr.ActiveSlot(range[i], true);
-                            autoTarget.Add(range[i].GetChild(0));
+                            uiMgr.ActiveSlot(range[idx], true);
+                            autoTarget.Add(range[idx].GetChild(0));
+                            idx++;
                         }
                         pos %= divisor;
                     }
@@ -283,24 +322,23 @@ public class BattleMgr : MonoBehaviour
         }
     }
 
-    public void UseCard(string effectKey, Transform selectTarget = null)
+    public void UseCard(string effectKey, Transform selectTarget = null) // 카드를 연속으로 사용해서 계속 호출되지 않게
     {
-        List<Transform> targets;
+        Transform order = GetOrderSlot().GetChild(0);
+        string key = null;
 
         if (selectTarget != null)
         {
             // 선택 타겟
-            targets = effectMgr.Effect(effectKey, selectTarget);
+            key = effectMgr.Effect(effectKey, selectTarget);
         }
         else if (autoTarget.Count > 0)
         {
             // 자동 타겟
             foreach (Transform target in autoTarget)
             {
-                effectMgr.Effect(effectKey, target);
+                key ??= effectMgr.Effect(effectKey, target); // key 한번만 초기화
             }
-
-            targets = new List<Transform>(autoTarget);
         }
         else
         {
@@ -309,41 +347,70 @@ public class BattleMgr : MonoBehaviour
             return;
         }
 
+        if (!string.IsNullOrEmpty(key))
+        {
+            StartCoroutine(uiMgr.CoChgSprite(order, order.GetComponent<Character>().spriteRoot + key));
+            StartCoroutine(uiMgr.CoWaitChgSprite());
+        }
+
         InactiveTarget();
 
-        uiMgr.ActiveAction(GetOrderSlot().GetChild(0), targets);
+        if(!recentOrder.isEnemy && uiMgr.hand.childCount < 1)
+        {
+            Draw(drawCnt);
+            // 패널티 추가
+        }
     }
 
     private void DeathChar(Character character)
     {
-        orderMgr.DelOrder(character.id);
+        uiMgr.OnSpriteChangeHit += Delete;
 
         void Delete()
         {
-            uiMgr.OnSpriteChangeFinished -= Delete;
+            uiMgr.OnSpriteChangeHit -= Delete;
             Destroy(character.gameObject);
-            uiMgr.DelOrderImg(character.spriteRoot);
+            character.gameObject.SetActive(false);
+            orderMgr.DelOrder(character.id);
+            uiMgr.DelOrderImg(character.orderIdx);
 
             Transform slot = character.transform.parent;
             int idx = slot.GetSiblingIndex();
+            int blank = 0;
 
             for (; idx < slot.parent.childCount - 1; idx++)
             {
-                Transform nextSlot = slot.parent.GetChild(idx + 1);
-
-                if (nextSlot.childCount > 0)
+                if (idx + 1 + blank < slot.parent.childCount)
                 {
-                    Transform nextChar = nextSlot.GetChild(0);
-                    Vector2 localPos = nextChar.localPosition;
+                    Transform nextSlot = slot.parent.GetChild(idx + 1 + blank);
+                    Transform nextChar;
+                    Vector2 localPos;
 
-                    nextChar.SetParent(slot);
-                    nextChar.localPosition = localPos;
+                    if (nextSlot.childCount > 0)
+                    {
+                        nextChar = nextSlot.GetChild(0);
+                        localPos = nextChar.localPosition;
 
-                    slot = nextSlot;
+                        nextChar.SetParent(slot);
+                        nextChar.localPosition = localPos;
+
+                        slot = nextSlot;
+                    }
+                    else if (!nextSlot.gameObject.activeSelf)
+                    {
+                        nextSlot.gameObject.SetActive(true);
+                        blank++;
+
+                        nextChar = slot.parent.GetChild(idx + 1 + blank).GetChild(0);
+                        localPos = nextChar.localPosition;
+
+                        nextChar.SetParent(slot);
+                        nextChar.localPosition = localPos;
+
+                        slot = nextSlot;
+                    }
                 }
             }
         }
-
-        uiMgr.OnSpriteChangeFinished += Delete;
     }
 }

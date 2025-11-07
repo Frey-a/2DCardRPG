@@ -43,8 +43,8 @@ public class BattleOrderMgr : MonoBehaviour
             slot = Instantiate(dicePrefab, allies);
         }
         Image img = slot.transform.GetChild(0).GetComponent<Image>();
-        _ = GetComponent<BattleUIMgr>().SetSprite(img, spriteRoot + "Idle"); // 프로필로 변경
 
+        StartCoroutine(GetComponent<BattleUIMgr>().CoSetSprite(img, spriteRoot + "Idle")); // 프로필로 변경
         order.Add((0, 0, isEnemy, id));
         diceToOrderIndex[slot.transform] = order.Count - 1;
     }

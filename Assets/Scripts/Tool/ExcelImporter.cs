@@ -122,6 +122,20 @@ public class ExcelImporter : EditorWindow
                     object val = reader.GetValue(colIndex++);
                     if (val != null)
                     {
+                        if(field.FieldType == typeof(bool))
+                        {
+                            if(val.ToString().CompareTo("y") == 0)
+                            {
+                                field.SetValue(obj, true);
+                            }
+                            else
+                            {
+                                field.SetValue(obj, false);
+                            }
+
+                            continue;
+                        }
+
                         object converted = Convert.ChangeType(val, field.FieldType);
                         field.SetValue(obj, converted);
                     }
