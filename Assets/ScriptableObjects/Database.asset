@@ -1,0 +1,307 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33963a53c535c06499a66df91f38bb13, type: 3}
+  m_Name: Database
+  m_EditorClassIdentifier: 
+  cards:
+  - cardId: 1
+    cardName: "\uCF54\uC694\uD14C\uAFC8"
+    cardClass: koyote
+    cardCategory: 
+    cardGroup: dream
+    rarity: common
+    cardKeyword: eliminate
+    desc: "1\uC7A5 \uBF51\uAE30"
+    effectKey: koyodream
+    rarityIcon: 
+    classIcon: 
+    categoryIcon: 
+    vfx: 
+    sfx: 
+    duration: 0
+  - cardId: 2
+    cardName: "\uCF54\uC694\uD14C\uD380\uCE58"
+    cardClass: koyote
+    cardCategory: act
+    cardGroup: 
+    rarity: rare
+    cardKeyword: 
+    desc: "1\uBC88 3\uBC88\uC790\uB9AC 5\uB370\uBBF8\uC9C0 / \uD134\uC885\uB8CC"
+    effectKey: koyopunch
+    rarityIcon: 
+    classIcon: 
+    categoryIcon: 
+    vfx: 
+    sfx: 
+    duration: 0
+  - cardId: 3
+    cardName: "\uCF54\uC694\uD14C\uD314\uCF58\uD380\uCE58"
+    cardClass: koyote
+    cardCategory: act
+    cardGroup: 
+    rarity: rare
+    cardKeyword: 
+    desc: "\uD0C0\uAC9F 50\uB370\uBBF8\uC9C0 / \uD134\uC885\uB8CC"
+    effectKey: koyoppunch
+    rarityIcon: 
+    classIcon: 
+    categoryIcon: 
+    vfx: 
+    sfx: 
+    duration: 0
+  - cardId: 4
+    cardName: "\uBAAC\uC2A4\uD130 \uACF5\uACA9"
+    cardClass: monster
+    cardCategory: 
+    cardGroup: 
+    rarity: 
+    cardKeyword: 
+    desc: "\uBAAC\uC2A4\uD130 \uACF5\uACA9"
+    effectKey: monatk
+    rarityIcon: 
+    classIcon: 
+    categoryIcon: 
+    vfx: 
+    sfx: 
+    duration: 0
+  - cardId: 5
+    cardName: "\uBAAC\uC2A4\uD130\uACF5\uACA92"
+    cardClass: monster
+    cardCategory: 
+    cardGroup: 
+    rarity: 
+    cardKeyword: 
+    desc: "\uBAAC\uC2A4\uD130 \uACF5\uACA92"
+    effectKey: monatk2
+    rarityIcon: 
+    classIcon: 
+    categoryIcon: 
+    vfx: 
+    sfx: 
+    duration: 0
+  - cardId: 6
+    cardName: "\uCF54\uC694\uD14C\uD790"
+    cardClass: koyote
+    cardCategory: 
+    cardGroup: 
+    rarity: 
+    cardKeyword: 
+    desc: "\uD0C0\uAC9F 3\uD68C\uBCF5"
+    effectKey: koyoheal
+    rarityIcon: 
+    classIcon: 
+    categoryIcon: 
+    vfx: 
+    sfx: 
+    duration: 0
+  - cardId: 7
+    cardName: "\uCF54\uC694\uD14C\uD7902"
+    cardClass: koyote
+    cardCategory: act
+    cardGroup: 
+    rarity: 
+    cardKeyword: 
+    desc: "\uD0C0\uAC9F 5\uD68C\uBCF5 / \uD134\uC885\uB8CC"
+    effectKey: koyoheal2
+    rarityIcon: 
+    classIcon: 
+    categoryIcon: 
+    vfx: 
+    sfx: 
+    duration: 0
+  effects:
+  - effectKey: koyodream
+    type: draw
+    targetFaction: 
+    targetOperator: 
+    targetPos: 0
+    val: 1
+    pushVal: 0
+    refOperator: 
+    refTarget: 
+    refType: 
+    conditionVal: 0
+    conditionMore: 
+    repeatTarget: 
+    repeatCnt: 0
+    refVal: 0
+    searchRange: 
+    searchType: 
+    searchId: 0
+  - effectKey: koyopunch
+    type: damage
+    targetFaction: enemy
+    targetOperator: position
+    targetPos: 1010
+    val: 5
+    pushVal: 0
+    refOperator: 
+    refTarget: 
+    refType: 
+    conditionVal: 0
+    conditionMore: 
+    repeatTarget: 
+    repeatCnt: 0
+    refVal: 0
+    searchRange: 
+    searchType: 
+    searchId: 0
+  - effectKey: koyoppunch
+    type: damage
+    targetFaction: enemy
+    targetOperator: single
+    targetPos: 0
+    val: 50
+    pushVal: 0
+    refOperator: 
+    refTarget: 
+    refType: 
+    conditionVal: 0
+    conditionMore: 
+    repeatTarget: 
+    repeatCnt: 0
+    refVal: 0
+    searchRange: 
+    searchType: 
+    searchId: 0
+  - effectKey: monatk
+    type: damage
+    targetFaction: ally
+    targetOperator: position
+    targetPos: 1110
+    val: 8
+    pushVal: 0
+    refOperator: 
+    refTarget: 
+    refType: 
+    conditionVal: 0
+    conditionMore: 
+    repeatTarget: 
+    repeatCnt: 0
+    refVal: 0
+    searchRange: 
+    searchType: 
+    searchId: 0
+  - effectKey: monatk2
+    type: damage
+    targetFaction: ally
+    targetOperator: position
+    targetPos: 1000
+    val: 10
+    pushVal: 0
+    refOperator: 
+    refTarget: 
+    refType: 
+    conditionVal: 0
+    conditionMore: 
+    repeatTarget: 
+    repeatCnt: 0
+    refVal: 0
+    searchRange: 
+    searchType: 
+    searchId: 0
+  - effectKey: koyoheal
+    type: heal
+    targetFaction: ally
+    targetOperator: single
+    targetPos: 0
+    val: 3
+    pushVal: 0
+    refOperator: 
+    refTarget: 
+    refType: 
+    conditionVal: 0
+    conditionMore: 
+    repeatTarget: 
+    repeatCnt: 0
+    refVal: 0
+    searchRange: 
+    searchType: 
+    searchId: 0
+  - effectKey: koyoheal2
+    type: heal
+    targetFaction: ally
+    targetOperator: single
+    targetPos: 0
+    val: 5
+    pushVal: 0
+    refOperator: 
+    refTarget: 
+    refType: 
+    conditionVal: 0
+    conditionMore: 
+    repeatTarget: 
+    repeatCnt: 0
+    refVal: 0
+    searchRange: 
+    searchType: 
+    searchId: 0
+  chars:
+  - charId: 1001
+    charName: Coyote
+    maxHp: 30
+    maxMp: 10
+    maxSp: 0
+    drawPoint: 2
+  - charId: 1002
+    charName: Snow
+    maxHp: 30
+    maxMp: 10
+    maxSp: 0
+    drawPoint: 2
+  - charId: 1003
+    charName: BlackCat
+    maxHp: 30
+    maxMp: 10
+    maxSp: 0
+    drawPoint: 2
+  monsters:
+  - monsterId: 123
+    MonsterName: Mob1
+    isBig: 0
+    maxHp: 20
+    maxStagger: 10
+    vfxStagger: 
+    breakStagger: 
+    startBuff: 
+    sequenceId: alea_dummy_phase001
+    triggerKey: 
+    vfx: 
+  - monsterId: 1234
+    MonsterName: Mob2
+    isBig: 0
+    maxHp: 20
+    maxStagger: 10
+    vfxStagger: 
+    breakStagger: 
+    startBuff: 
+    sequenceId: alea_dummy_phase001
+    triggerKey: 
+    vfx: 
+  - monsterId: 12345
+    MonsterName: Hongryun_Beast
+    isBig: 1
+    maxHp: 55
+    maxStagger: 10
+    vfxStagger: 
+    breakStagger: 
+    startBuff: 
+    sequenceId: alea_dummy_phase001
+    triggerKey: 
+    vfx: 
+  sequences:
+  - sequenceId: alea_dummy_phase001
+    nextSequence: next
+    cardIds: 0400000005000000
+    priorities: 6f0000006f000000
+    rates: 280000003c000000
+    groups: 0000000000000000

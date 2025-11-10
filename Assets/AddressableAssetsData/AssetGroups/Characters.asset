@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Characters
+  m_EditorClassIdentifier: 
+  m_GroupName: Characters
+  m_GUID: 5e6f104295b53b04db4ce530db27b0fd
+  m_SerializeEntries:
+  - m_GUID: 375627002d0664142806cae96153a058
+    m_Address: Coyote_Attack
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 447b5c0a44e0cd148a0d77ab47695454
+    m_Address: BlackCat_Hit
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 54259cfbf5027b44bbb49c74265a5dac
+    m_Address: Snow_Attack
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 674f5520c442cdb47ae2ee8a92a6f4d8
+    m_Address: Snow_Heal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6e01970a596793343b56e834dc75091a
+    m_Address: Coyote_Heal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 771809d6000a46841be46ab0d1e7c2b2
+    m_Address: BlackCat_Heal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a4a3a03d3d7e37640a9a4d548364a9be
+    m_Address: Snow_Idle
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a6b18f499c1d03c45a22316100148bd6
+    m_Address: BlackCat_Attack
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af6fa2eb19fabbe4293623d2a8c78289
+    m_Address: Snow_Hit
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b07c35945df5a3a4d97cc7546fcab7f9
+    m_Address: Coyote_Idle
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c21c6a86e1a4f9d4b8c3918116a4a551
+    m_Address: Coyote_Hit
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d8038b1a40c65f64f88f55a283c9c24a
+    m_Address: BlackCat_Idle
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: fe2ccb433204e7e49ad97ce5654f1a96, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1d88d25797280b240ab5e249f4b76f54, type: 2}
+    - {fileID: 11400000, guid: efc46c1954a26fd4eb53ae0ced4c3c2c, type: 2}
